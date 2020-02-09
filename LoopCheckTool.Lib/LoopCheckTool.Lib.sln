@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Lib", "LoopCheckTool.Lib.csproj", "{653DAAA7-5002-42DA-9447-74210A366726}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2890DFEA-6D05-4155-B9A0-9C1D87887C92}
+	EndGlobalSection
+EndGlobal
