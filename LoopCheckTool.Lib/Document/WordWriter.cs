@@ -15,9 +15,16 @@ namespace LoopCheckTool.Lib.Document
         private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private List<CustomDocumentProperty> customProperties;
         private List<Source> sources;
+        private WriterConfiguration configuration;
+
+        public WordWriter(WriterConfiguration config) : this()
+        {
+            configuration = config;
+        }
 
         public WordWriter()
         {
+            configuration = new WriterConfiguration();
             customProperties = new List<CustomDocumentProperty>();
             sources = new List<Source>();
         }
@@ -27,7 +34,7 @@ namespace LoopCheckTool.Lib.Document
             string[] explosion = instruction.Split('"');
             if (explosion.Length != 3)
             {
-                throw new Exception("Unrecognized field instruction format.");
+                throw new WordWriterException("Unrecognized field instruction format.");
             }
             else
             {
@@ -58,53 +65,69 @@ namespace LoopCheckTool.Lib.Document
 
         public void FillTemplate_Safe(MemoryStream template, IDictionary<string, string> values, int idx)
         {
-            logger.Info($"Filling template for row {idx}.");
-            using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
+            try
             {
-                OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
-
-                foreach (SimpleField field in root.Descendants<SimpleField>())
+                logger.Info($"Filling template for row {idx}.");
+                using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
                 {
-                    logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
-                    var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Instruction.Value, idx);
-                    field.Instruction.Value = newInstruction;
+                    OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
 
-                    string value = null;
-                    if (!values.TryGetValue(oldKey, out value))
+                    foreach (SimpleField field in root.Descendants<SimpleField>())
                     {
-                        throw new Exception($"No key found for {oldKey}.");
+                        logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
+                        var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Instruction.Value, idx);
+                        field.Instruction.Value = newInstruction;
+
+                        string value = null;
+                        if (!values.TryGetValue(oldKey, out value))
+                        {
+                            throw new WordWriterException($"No key found for {oldKey}.");
+                        }
+
+                        if (string.IsNullOrWhiteSpace(value))
+                        {
+                            logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
+                        }
+
+                        AddCustomProperty(newPropName, value);
                     }
 
-                    if (string.IsNullOrWhiteSpace(value))
+                    foreach (FieldCode field in root.Descendants<FieldCode>())
                     {
-                        logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
-                    }
+                        logger.Info($"Handling FieldCode of text: {field.Text}.");
+                        var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Text, idx);
+                        field.Text = newInstruction;
 
-                    AddCustomProperty(newPropName, value);
+                        string value = null;
+                        if (!values.TryGetValue(oldKey, out value))
+                        {
+                            throw new WordWriterException($"No key found for {oldKey}.");
+                        }
+
+                        if (string.IsNullOrWhiteSpace(value))
+                        {
+                            logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
+                        }
+
+                        AddCustomProperty(newPropName, value);
+                    }
                 }
 
-                foreach (FieldCode field in root.Descendants<FieldCode>())
-                {
-                    logger.Info($"Handling FieldCode of text: {field.Text}.");
-                    var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Text, idx);
-                    field.Text = newInstruction;
-
-                    string value = null;
-                    if (!values.TryGetValue(oldKey, out value))
-                    {
-                        throw new Exception($"No key found for {oldKey}.");
-                    }
-
-                    if (string.IsNullOrWhiteSpace(value))
-                    {
-                        logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
-                    }
-
-                    AddCustomProperty(newPropName, value);
-                }
+                sources.Add(new Source(new WmlDocument(template.Length.ToString(), template), true));
             }
+            catch (WordWriterException ex)
+            {
+                logger.Error($"Caught error: \"{ex.Message}\" for row {idx}.");
+                if (configuration.IgnoreErrors)
+                {
+                    logger.Error($"This error is being ignored due to configuration. The row will be skipped.");
+                }
+                else
+                {
+                    throw ex;
+                }
 
-            sources.Add(new Source(new WmlDocument(template.Length.ToString(), template), true));
+            }
         }
 
         public MemoryStream ExportDocument()
@@ -149,6 +172,13 @@ namespace LoopCheckTool.Lib.Document
                     customProp.PropertyId = pid++;
                 }
             }
+        }
+
+        public class WordWriterException : Exception
+        {
+            public WordWriterException() { }
+            public WordWriterException(string message) : base(message) { }
+            public WordWriterException(string message, Exception inner) : base(message, inner) { }
         }
     }
 }
