@@ -22,46 +22,6 @@ namespace LoopCheckTool.Lib.Document
             sources = new List<Source>();
         }
 
-        public void FillTemplate(MemoryStream template, IDictionary<string, string> values)
-        {
-            using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
-            {
-                var root = templateDoc.MainDocumentPart.RootElement;
-                //FillTemplate_Helper(root);
-
-                // All fields can be either SimpleFields or FieldCodes
-                foreach (SimpleField field in root.Descendants<SimpleField>())
-                {
-                    OpenXmlElement parent = field.Parent;
-                    if (parent != default(OpenXmlElement))
-                    {
-                        string[] explode = field.Instruction.Value.Split('"');
-
-                        string newVal = values[explode[1]];
-                        Run newText = new Run(new Text(newVal));
-                        parent.InsertAfter(newText, field);
-                        parent.RemoveChild(field);
-                    }
-                }
-
-                foreach (FieldCode field in root.Descendants<FieldCode>())
-                {
-                    OpenXmlElement parent = field.Parent;
-                    if (parent != default(OpenXmlElement))
-                    {
-                        string[] explode = field.Text.Split('"');
-
-                        string newVal = values[explode[1]];
-                        Run newText = new Run(new Text(newVal));
-                        parent.InsertAfter(newText, field);
-                        parent.RemoveChild(field);
-                    }
-                }
-            }
-
-            sources.Add(new Source(new WmlDocument(template.Length.ToString(), template), true));
-        }
-
         private (string, string, string) TransformFieldProperty(string instruction, int suffix)
         {
             string[] explosion = instruction.Split('"');
@@ -77,14 +37,35 @@ namespace LoopCheckTool.Lib.Document
             }
         }
 
+        private void AddCustomProperty(string name, string value)
+        {
+            var customPropertyResults = customProperties.Where(c => c.Name.Value.Equals(name));
+            CustomDocumentProperty customProperty = customPropertyResults.FirstOrDefault();
+            if (customProperty == default(CustomDocumentProperty))
+            {
+                CustomDocumentProperty newProp = new CustomDocumentProperty();
+                newProp.VTLPWSTR = new DocumentFormat.OpenXml.VariantTypes.VTLPWSTR(value);
+                newProp.FormatId = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
+                newProp.Name = name;
+                customProperties.Add(newProp);
+            }
+
+            if (customPropertyResults.Count() > 1)
+            {
+                logger.Warn($"A custom property search for the name {name} turned up more than one result.");
+            }
+        }
+
         public void FillTemplate_Safe(MemoryStream template, IDictionary<string, string> values, int idx)
         {
+            logger.Info($"Filling template for row {idx}.");
             using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
             {
                 OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
 
                 foreach (SimpleField field in root.Descendants<SimpleField>())
                 {
+                    logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
                     var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Instruction.Value, idx);
                     field.Instruction.Value = newInstruction;
 
@@ -99,11 +80,27 @@ namespace LoopCheckTool.Lib.Document
                         logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
                     }
 
-                    CustomDocumentProperty newProp = new CustomDocumentProperty();
-                    newProp.VTLPWSTR = new DocumentFormat.OpenXml.VariantTypes.VTLPWSTR(value);
-                    newProp.FormatId = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
-                    newProp.Name = newPropName;
-                    customProperties.Add(newProp);
+                    AddCustomProperty(newPropName, value);
+                }
+
+                foreach (FieldCode field in root.Descendants<FieldCode>())
+                {
+                    logger.Info($"Handling FieldCode of text: {field.Text}.");
+                    var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Text, idx);
+                    field.Text = newInstruction;
+
+                    string value = null;
+                    if (!values.TryGetValue(oldKey, out value))
+                    {
+                        throw new Exception($"No key found for {oldKey}.");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
+                    }
+
+                    AddCustomProperty(newPropName, value);
                 }
             }
 
@@ -123,6 +120,7 @@ namespace LoopCheckTool.Lib.Document
 
         private void BuildCustomProperties(MemoryStream documentData)
         {
+            logger.Info("Building custom properties section for newly-generated document.");
             using (WordprocessingDocument document = WordprocessingDocument.Open(documentData, true))
             {
                 CustomFilePropertiesPart customPropertiesPart = document.CustomFilePropertiesPart;
