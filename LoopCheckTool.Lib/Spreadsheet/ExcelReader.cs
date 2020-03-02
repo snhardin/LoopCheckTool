@@ -12,12 +12,12 @@ namespace LoopCheckTool.Lib.Spreadsheet
 {
     public class ExcelReader : IDisposable
     {
+        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private SpreadsheetDocument document;
-        private List<string> headers;
 
         public ExcelReader(string fileName)
         {
-            this.document = SpreadsheetDocument.Open(fileName, false);
+            document = SpreadsheetDocument.Open(fileName, false);
         }
 
         public void Dispose()
@@ -35,49 +35,12 @@ namespace LoopCheckTool.Lib.Spreadsheet
             return new RowReaderContext(document, worksheet);
         }
 
-        public string ReadRows(Worksheet input)
-        {
-            StringBuilder str = new StringBuilder();
-            SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
-            WorksheetPart worksheetData = (WorksheetPart) document.WorkbookPart.GetPartById(input.ID);
-
-            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetData))
-            {
-                while (reader.Read())
-                {
-                    if (reader.ElementType == typeof(Row))
-                    {
-                        reader.ReadFirstChild();
-
-                        do
-                        {
-                            if (reader.ElementType == typeof(Cell))
-                            {
-                                Cell c = (Cell)reader.LoadCurrentElement();
-
-                                if (c.DataType != null && c.DataType == CellValues.SharedString)
-                                {
-                                    str.Append(sharedStrings.ElementAt(int.Parse(c.CellValue.Text)).InnerText + " ");
-                                }
-                                else
-                                {
-                                    str.Append(c.CellValue.Text);
-                                }
-                            }
-                        } while (reader.ReadNextSibling());
-                    }
-                }
-            }
-
-            return str.ToString();
-        }
-
         public class Worksheet
         {
             public Worksheet(string id, string name)
             {
-                this.ID = id;
-                this.Name = name;
+                ID = id;
+                Name = name;
             }
 
             public string ID { get; }
@@ -94,8 +57,8 @@ namespace LoopCheckTool.Lib.Spreadsheet
             {
                 this.document = document;
                 WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
-                this.reader = OpenXmlReader.Create(worksheetData);
-                this.headers = LoadHeaders();
+                reader = OpenXmlReader.Create(worksheetData);
+                headers = LoadHeaders();
             }
 
             private bool ReadNextRow(Action<Cell> func)
@@ -121,6 +84,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
                         // If logic reaches here, then this row had no cells.
                         // Skip to the next row and check.
+                        logger.Warn("Found a row with no cells.");
                     }
                 }
 
@@ -144,7 +108,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
                 else
                 {
-                    throw new Exception("Did not find a Row before the end of the worksheet.");
+                    throw new ExcelReaderException("Could not find headers for the Excel spreadsheet.");
                 }
             }
 
@@ -155,7 +119,35 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 Regex regex = new Regex("[A-Za-z]+");
                 Match match = regex.Match(c.CellReference.Value);
 
+                if (string.IsNullOrEmpty(match.Value))
+                {
+                    throw new ExcelReaderException($"Could not decipher the column name from the following reference: \"{c.CellReference.Value}\".");
+                }
+
                 return match.Value;
+            }
+
+            private uint GetCellRow(Cell c)
+            {
+                // Taken from MSDN
+                // https://docs.microsoft.com/en-us/office/open-xml/how-to-get-a-column-heading-in-a-spreadsheet
+                Regex regex = new Regex(@"\d+");
+                Match match = regex.Match(c.CellReference.Value);
+
+                if (string.IsNullOrEmpty(match.Value))
+                {
+                    throw new ExcelReaderException($"Could not decipher the column name from the following cell: \"{c.CellReference.Value}\".");
+                }
+
+                if (uint.TryParse(match.Value, out uint result))
+                {
+                    return result;
+                }
+                else
+                {
+                    throw new ExcelReaderException($"Could not parse integer from the following cell: \"{c.CellReference.Value}\"\n" +
+                        $"Matched regex: {match.Value}.");
+                }
             }
 
             private string GetCellValue(Cell c)
@@ -175,10 +167,12 @@ namespace LoopCheckTool.Lib.Spreadsheet
             public IDictionary<string, string> ReadNextRow()
             {
                 Dictionary<string, string> keyValues = new Dictionary<string, string>();
+                uint row = uint.MaxValue;
 
                 void func(Cell cell)
                 {
                     string cellColumn = GetCellColumn(cell);
+                    row = GetCellRow(cell);
                     if (headers.TryGetValue(cellColumn, out string header))
                     {
                         keyValues.Add(header, GetCellValue(cell));
@@ -191,6 +185,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
                     IEnumerable<string> missingHeaders = headers.Values.Except(keyValues.Keys);
                     foreach (string missingHeader in missingHeaders)
                     {
+                        logger.Warn($"Cell for column \"{missingHeader}\" missing for row \"{row}\".");
                         keyValues.Add(missingHeader, "");
                     }
 
@@ -198,7 +193,8 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
                 else
                 {
-                    return null; // TODO
+                    // There are no more rows left.
+                    return null;
                 }
             }
 
@@ -206,6 +202,13 @@ namespace LoopCheckTool.Lib.Spreadsheet
             {
                 reader.Close();
             }
+        }
+
+        public class ExcelReaderException : Exception
+        {
+            public ExcelReaderException() { }
+            public ExcelReaderException(string message) : base(message) { }
+            public ExcelReaderException(string message, Exception inner) : base(message, inner) { }
         }
     }
 }

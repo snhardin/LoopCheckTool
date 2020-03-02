@@ -18,12 +18,12 @@ namespace LoopCheckTool.Console
             public bool IgnoreErrors { get; set; } = false;
             [Option('i', "inputFile", Required = true, HelpText = "The spreadsheet file to read from.")]
             public string InputFilePath { get; set; }
-            [Option('o', "outputFile", Required = true, HelpText = "The path to write the file to.")]
-            public string OutputFilePath { get; set; }
+            [Option('o', "outputFile", Required = false, HelpText = "The path to write the file to.")]
+            public string OutputFilePath { get; set; } = @".\out.docx";
             [Option('s', "sheet", Required = true, HelpText = "The worksheet in the loop check list to pull data from.")]
             public string Sheet { get; set; }
             [Option('t', "templateDir", Required = false, HelpText = "The directory to find DOCX templates in. Defaults to \"templates/\".", Default = ".\\templates")]
-            public string TemplateDirectory { get; set; } = ".\\templates";
+            public string TemplateDirectory { get; set; } = @".\templates";
             [Option('k', "templateKey", Required = false, HelpText = "The column in the IO List that will determine what template to use. Defaults to \"IO Type\".", Default = "IO Type")]
             public string TemplateKey { get; set; } = "IO Type";
         }
@@ -41,8 +41,7 @@ namespace LoopCheckTool.Console
                 System.Console.WriteLine("Run with the '--ignoreErrors' flag to attempt to bypass this error.");
                 System.Console.Error.WriteLine(ex.StackTrace);
 
-                LibraryException libEx = ex as LibraryException;
-                if (libEx != null)
+                if (ex is LibraryException libEx)
                 {
                     foreach (KeyValuePair<string, string> pair in libEx.RowData)
                     {
@@ -50,6 +49,8 @@ namespace LoopCheckTool.Console
                     }
                 }
             }
+
+            System.Console.ReadKey();
         }
 
         private static void HandleParsed(Options o)
@@ -71,7 +72,12 @@ namespace LoopCheckTool.Console
                             {
                                 if (!rows.TryGetValue(o.TemplateKey, out string templateName))
                                 {
-                                    throw new LibraryException($"No value exists template key \"{o.TemplateKey}\"", i, rows);
+                                    throw new LibraryException($"No value exists template key \"{o.TemplateKey}\".", i, rows);
+                                }
+
+                                if (string.IsNullOrWhiteSpace(templateName))
+                                {
+                                    throw new LibraryException($"Cell for \"{o.TemplateKey}\" is blank.", i, rows);
                                 }
 
                                 string templatePath = null;
@@ -82,14 +88,14 @@ namespace LoopCheckTool.Console
                                 catch (ArgumentException ex)
                                 {
                                     throw new LibraryException("Failed to combine specified TemplateDirectory and TemplateKey. The result was an invalid path.\n" +
-                                        $"Key used: \"{o.TemplateKey}\"\n" +
-                                        $"Value retrieved: \"{templateName}\"",
+                                        $"Key used: \"{o.TemplateKey}\".\n" +
+                                        $"Value retrieved: \"{templateName}\".",
                                         ex, i, rows);
                                 }
 
                                 if (!File.Exists(templatePath))
                                 {
-                                    throw new LibraryException($"Could not find template using calculated path: {templatePath}", i, rows);
+                                    throw new LibraryException($"Could not find template using calculated path: {templatePath}.", i, rows);
                                 }
 
                                 byte[] rawTemplate = File.ReadAllBytes(templatePath);
@@ -110,7 +116,7 @@ namespace LoopCheckTool.Console
                             catch (LibraryException ex)
                             {
                                 System.Console.Error.WriteLine($"An error occurred while attempting to use the Loop Check Library: \"{ex.Message}\"");
-                                System.Console.Error.WriteLine($"IO List row {ex.AffectedRow}");
+                                System.Console.Error.WriteLine($"IO List row {ex.AffectedRow}.");
                                 if (ex.InnerException != null)
                                 {
                                     System.Console.Error.WriteLine($"The inner exception's message is: \"{ex.InnerException.Message}\"");

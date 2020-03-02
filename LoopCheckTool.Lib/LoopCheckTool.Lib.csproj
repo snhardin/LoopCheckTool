@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="Document\DocsWriter.cs" />
     <Compile Include="Document\WordWriter.cs" />
-    <Compile Include="Document\WriterConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spreadsheet\ExcelReader.cs" />
     <Compile Include="Spreadsheet\SheetsReader.cs" />

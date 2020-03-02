@@ -15,16 +15,9 @@ namespace LoopCheckTool.Lib.Document
         private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private List<CustomDocumentProperty> customProperties;
         private List<Source> sources;
-        private WriterConfiguration configuration;
-
-        public WordWriter(WriterConfiguration config) : this()
-        {
-            configuration = config;
-        }
 
         public WordWriter()
         {
-            configuration = new WriterConfiguration();
             customProperties = new List<CustomDocumentProperty>();
             sources = new List<Source>();
         }
@@ -65,69 +58,52 @@ namespace LoopCheckTool.Lib.Document
 
         public void FillTemplate_Safe(MemoryStream template, IDictionary<string, string> values, int idx)
         {
-            try
+            logger.Info($"Filling template for row {idx}.");
+            using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
             {
-                logger.Info($"Filling template for row {idx}.");
-                using (WordprocessingDocument templateDoc = WordprocessingDocument.Open(template, true))
+                OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
+
+                foreach (SimpleField field in root.Descendants<SimpleField>())
                 {
-                    OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
+                    logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
+                    var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Instruction.Value, idx);
+                    field.Instruction.Value = newInstruction;
 
-                    foreach (SimpleField field in root.Descendants<SimpleField>())
+                    string value = null;
+                    if (!values.TryGetValue(oldKey, out value))
                     {
-                        logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
-                        var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Instruction.Value, idx);
-                        field.Instruction.Value = newInstruction;
-
-                        string value = null;
-                        if (!values.TryGetValue(oldKey, out value))
-                        {
-                            throw new WordWriterException($"No key found for {oldKey}.");
-                        }
-
-                        if (string.IsNullOrWhiteSpace(value))
-                        {
-                            logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
-                        }
-
-                        AddCustomProperty(newPropName, value);
+                        throw new WordWriterException($"No key found for {oldKey}.");
                     }
 
-                    foreach (FieldCode field in root.Descendants<FieldCode>())
+                    if (string.IsNullOrWhiteSpace(value))
                     {
-                        logger.Info($"Handling FieldCode of text: {field.Text}.");
-                        var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Text, idx);
-                        field.Text = newInstruction;
-
-                        string value = null;
-                        if (!values.TryGetValue(oldKey, out value))
-                        {
-                            throw new WordWriterException($"No key found for {oldKey}.");
-                        }
-
-                        if (string.IsNullOrWhiteSpace(value))
-                        {
-                            logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
-                        }
-
-                        AddCustomProperty(newPropName, value);
+                        logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
                     }
+
+                    AddCustomProperty(newPropName, value);
                 }
 
-                sources.Add(new Source(new WmlDocument(template.Length.ToString(), template), true));
-            }
-            catch (WordWriterException ex)
-            {
-                logger.Error($"Caught error: \"{ex.Message}\" for row {idx}.");
-                if (configuration.IgnoreErrors)
+                foreach (FieldCode field in root.Descendants<FieldCode>())
                 {
-                    logger.Error($"This error is being ignored due to configuration. The row will be skipped.");
-                }
-                else
-                {
-                    throw ex;
-                }
+                    logger.Info($"Handling FieldCode of text: {field.Text}.");
+                    var (newInstruction, oldKey, newPropName) = TransformFieldProperty(field.Text, idx);
+                    field.Text = newInstruction;
 
+                    if (!values.TryGetValue(oldKey, out string value))
+                    {
+                        throw new WordWriterException($"No key found for {oldKey}.");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
+                    }
+
+                    AddCustomProperty(newPropName, value);
+                }
             }
+
+            sources.Add(new Source(new WmlDocument(template.Length.ToString(), template), true));
         }
 
         public MemoryStream ExportDocument()
