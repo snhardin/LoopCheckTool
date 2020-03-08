@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spreadsheet\ExcelReader.cs" />
     <Compile Include="Spreadsheet\SheetsReader.cs" />
+    <Compile Include="Utility\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

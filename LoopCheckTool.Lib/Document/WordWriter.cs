@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.CustomProperties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using LoopCheckTool.Lib.Utility;
 using OpenXmlPowerTools;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace LoopCheckTool.Lib.Document
 {
     public class WordWriter
     {
-        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog logger = Logger.GetOrLoadLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private List<CustomDocumentProperty> customProperties;
         private List<Source> sources;
 

@@ -4,9 +4,103 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LoopCheckTool.Desktop"
+        xmlns:viewModels="clr-namespace:LoopCheckTool.Desktop.ViewModels"
+        xmlns:commands="clr-namespace:LoopCheckTool.Desktop.Commands"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open"
+                        Executed="OpenCommandBinding_Executed"
+                        CanExecute="OpenCommandBinding_CanExecute" />
+    </Window.CommandBindings>
+    <Window.DataContext>
+        <viewModels:LoopCheckViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary Source="CommonStyling.xaml" />
+    </Window.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Menu VerticalAlignment="Top" Grid.ColumnSpan="100" Grid.Row="0" Grid.Column="0">
+            <MenuItem Header="_File">
+                <MenuItem Command="Open" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Command="Cut" />
+                <MenuItem Command="Copy" />
+                <MenuItem Command="Paste" />
+            </MenuItem>
+        </Menu>
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <GroupBox Header="Spreadsheet">
+                <StackPanel>
+                    <Label>Input:</Label>
+                    <DockPanel>
+                        <Button Command="Open"
+                                DockPanel.Dock="Right"
+                                Margin="10 0 0 0">
+                            Browse
+                        </Button>
+                        <TextBlock Text="{Binding RunConfig.InputFilePath}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Label>Output:</Label>
+                    <DockPanel>
+                        <Button Command="{Binding SelectOutputFile}"
+                                DockPanel.Dock="Right"
+                                Margin="10 0 0 0">
+                            Browse
+                        </Button>
+                        <TextBlock Text="{Binding RunConfig.OutputFilePath}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Label>Sheet:</Label>
+                    <ComboBox ItemsSource="{Binding RunConfig.Sheets}"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="ID"
+                              SelectedValue="{Binding RunConfig.SelectedSheet}"
+                              IsEnabled="{Binding RunConfig.InputFileSpecified}"></ComboBox>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Templates">
+                <StackPanel>
+                    <Label>Folder:</Label>
+                    <DockPanel>
+                        <Button Command="{Binding SelectTemplateFolder}"
+                                DockPanel.Dock="Right"
+                                Margin="10 0 0 0">
+                            Browse
+                        </Button>
+                        <TextBlock Text="{Binding RunConfig.TemplateFolderPath}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Label>Key:</Label>
+                    <ComboBox></ComboBox>
+                    <Button Name="btnTemplateMap" Margin="0 10 0 0" HorizontalAlignment="Right" Click="btnTemplateMap_Click">Modify Mappings</Button>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <DockPanel Grid.Column="1" Grid.Row="1">
+            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0 0 5 5">Generate Document</Button>
+            <StackPanel>
+                <GroupBox Header="Misc.">
+                    <CheckBox IsChecked="{Binding RunConfig.IgnoreErrors}" IsEnabled="{Binding RunConfig.InputFileSpecified}">
+                        <TextBlock>
+                            Ignore Errors
+                        </TextBlock>
+                    </CheckBox>
+                </GroupBox>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

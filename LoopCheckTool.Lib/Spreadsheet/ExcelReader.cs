@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using LoopCheckTool.Lib.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
 {
     public class ExcelReader : IDisposable
     {
-        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog logger = Logger.GetOrLoadLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private SpreadsheetDocument document;
 
         public ExcelReader(string fileName)
