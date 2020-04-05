@@ -10,12 +10,28 @@ namespace LoopCheckTool.Desktop.Model
 {
     public class LoopCheckModel : INotifyPropertyChanged
     {
+        private IEnumerable<string> _headers;
         private bool _ignoreErrors;
         private string _inputFilePath;
         private string _outputFilePath;
-        private string _selectedSheet;
+        private string _selectedHeader;
+        private ExcelReader.Worksheet _selectedSheet;
+        private string _selectedSheetId;
         private IEnumerable<ExcelReader.Worksheet> _sheets;
         private string _templateFolderPath;
+
+        public IEnumerable<string> Headers
+        {
+            get
+            {
+                return _headers;
+            }
+            set
+            {
+                _headers = value;
+                OnPropertyChanged(nameof(Headers));
+            }
+        }
 
         public bool IgnoreErrors
         {
@@ -70,7 +86,28 @@ namespace LoopCheckTool.Desktop.Model
             }
         }
 
-        public string SelectedSheet
+        public bool OutputFileSpecified
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(OutputFilePath) && !OutputFilePath.Equals(ViewModels.LoopCheckViewModel.DEFAULT_PATH);
+            }
+        }
+
+        public string SelectedHeader
+        {
+            get
+            {
+                return _selectedHeader;
+            }
+            set
+            {
+                _selectedHeader = value;
+                OnPropertyChanged(nameof(SelectedHeader));
+            }
+        }
+
+        public ExcelReader.Worksheet SelectedSheet
         {
             get
             {
@@ -80,6 +117,19 @@ namespace LoopCheckTool.Desktop.Model
             {
                 _selectedSheet = value;
                 OnPropertyChanged(nameof(SelectedSheet));
+            }
+        }
+
+        public string SelectedSheetId
+        {
+            get
+            {
+                return _selectedSheetId;
+            }
+            set
+            {
+                _selectedSheetId = value;
+                OnPropertyChanged(nameof(SelectedSheetId));
             }
         }
 
@@ -106,6 +156,14 @@ namespace LoopCheckTool.Desktop.Model
             {
                 _templateFolderPath = value;
                 OnPropertyChanged(nameof(TemplateFolderPath));
+            }
+        }
+
+        public bool TemplateFolderSpecified
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(TemplateFolderPath) && !TemplateFolderPath.Equals(ViewModels.LoopCheckViewModel.DEFAULT_PATH);
             }
         }
 

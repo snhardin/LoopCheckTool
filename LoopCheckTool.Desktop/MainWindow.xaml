@@ -64,11 +64,14 @@
                                    VerticalAlignment="Center" />
                     </DockPanel>
                     <Label>Sheet:</Label>
-                    <ComboBox ItemsSource="{Binding RunConfig.Sheets}"
+                    <ComboBox Name="cmbSheets"
+                              ItemsSource="{Binding RunConfig.Sheets}"
                               DisplayMemberPath="Name"
                               SelectedValuePath="ID"
-                              SelectedValue="{Binding RunConfig.SelectedSheet}"
-                              IsEnabled="{Binding RunConfig.InputFileSpecified}"></ComboBox>
+                              SelectedItem="{Binding RunConfig.SelectedSheet}"
+                              SelectedValue="{Binding RunConfig.SelectedSheetId}"
+                              IsEnabled="{Binding RunConfig.InputFileSpecified}"
+                              SelectionChanged="cmbSheets_SelectionChanged"></ComboBox>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Templates">
@@ -85,13 +88,14 @@
                                    VerticalAlignment="Center" />
                     </DockPanel>
                     <Label>Key:</Label>
-                    <ComboBox></ComboBox>
-                    <Button Name="btnTemplateMap" Margin="0 10 0 0" HorizontalAlignment="Right" Click="btnTemplateMap_Click">Modify Mappings</Button>
+                    <ComboBox ItemsSource="{Binding RunConfig.Headers}"
+                              SelectedItem="{Binding RunConfig.SelectedHeader}"></ComboBox>
+                    <Button Name="btnTemplateMap" Margin="0 10 0 0" HorizontalAlignment="Right" IsEnabled="False" Click="btnTemplateMap_Click">Modify Mappings</Button>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
         <DockPanel Grid.Column="1" Grid.Row="1">
-            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0 0 5 5">Generate Document</Button>
+            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0 0 5 5" Command="{Binding GenerateDocument}">Generate Document</Button>
             <StackPanel>
                 <GroupBox Header="Misc.">
                     <CheckBox IsChecked="{Binding RunConfig.IgnoreErrors}" IsEnabled="{Binding RunConfig.InputFileSpecified}">

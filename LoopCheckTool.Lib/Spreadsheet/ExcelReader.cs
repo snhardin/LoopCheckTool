@@ -31,6 +31,49 @@ namespace LoopCheckTool.Lib.Spreadsheet
             return document.WorkbookPart.Workbook.Descendants<Sheet>().Select(s => new Worksheet(s.Id.Value, s.Name.Value));
         }
 
+        public IEnumerable<string> GetHeader(Worksheet worksheet)
+        {
+            SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
+
+            WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
+            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetData))
+            {
+                // Read until a Row object is found.
+                while (reader.Read())
+                {
+                    if (reader.ElementType == typeof(Row))
+                    {
+                        if (reader.ReadFirstChild())
+                        {
+                            do
+                            {
+                                if (reader.ElementType == typeof(Cell))
+                                {
+                                    Cell c = (Cell)reader.LoadCurrentElement();
+                                    if (c.DataType != null && c.DataType == CellValues.SharedString)
+                                    {
+                                        yield return sharedStrings.ElementAt(int.Parse(c.CellValue.Text)).InnerText;
+                                    }
+                                    else
+                                    {
+                                        yield return c.CellValue.Text;
+                                    }
+                                }
+                            } while (reader.ReadNextSibling());
+
+                            yield break;
+                        }
+
+                        // If logic reaches here, then this row had no cells.
+                        // Skip to the next row and check.
+                        logger.Warn("Found a row with no cells.");
+                    }
+                }
+            }
+
+            throw new ExcelReaderException("No header found for worksheet.");
+        }
+
         public RowReaderContext CreateRowReader(Worksheet worksheet)
         {
             return new RowReaderContext(document, worksheet);

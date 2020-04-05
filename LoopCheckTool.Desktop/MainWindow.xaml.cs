@@ -47,5 +47,11 @@ namespace LoopCheckTool.Desktop
             LoopCheckViewModel viewModel = DataContext as LoopCheckViewModel;
             e.CanExecute = viewModel.SelectInputFile.CanExecute(null);
         }
+
+        private void cmbSheets_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LoopCheckViewModel viewModel = DataContext as LoopCheckViewModel;
+            viewModel.LoadNewHeaders();
+        }
     }
 }

@@ -129,8 +129,10 @@ namespace LoopCheckTool.Console
                             }
                         }
 
-                        MemoryStream export = writer.ExportDocument();
-                        File.WriteAllBytes(o.OutputFilePath, export.ToArray());
+                        using (MemoryStream export = writer.ExportDocument())
+                        {
+                            File.WriteAllBytes(o.OutputFilePath, export.ToArray());
+                        }
                     }
                 }
                 else
