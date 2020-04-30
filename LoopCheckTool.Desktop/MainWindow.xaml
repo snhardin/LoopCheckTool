@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:LoopCheckTool.Desktop.ViewModels"
         xmlns:commands="clr-namespace:LoopCheckTool.Desktop.Commands"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Loop Check Tool" Height="450" Width="800">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open"
                         Executed="OpenCommandBinding_Executed"
