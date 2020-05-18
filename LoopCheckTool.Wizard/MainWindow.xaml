@@ -1,0 +1,53 @@
+﻿<Window x:Class="LoopCheckTool.Wizard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoopCheckTool.Wizard"
+        xmlns:utilities="clr-namespace:LoopCheckTool.Wizard.Utilities"
+        xmlns:viewModels="clr-namespace:LoopCheckTool.Wizard.ViewModels"
+        mc:Ignorable="d"
+        Title="Loop Check Generation Wizard" Height="400" Width="500">
+    <Window.DataContext>
+        <viewModels:AppViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./Resources/Styles.xaml" />
+                <ResourceDictionary Source="./Resources/IntroPageDictionary.xaml" />
+                <ResourceDictionary Source="./Resources/InputFileDictionary.xaml" />
+                <ResourceDictionary Source="./Resources/HeaderSelectionDictionary.xaml" />
+                <ResourceDictionary Source="./Resources/TemplateSelectionDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Top" Grid.Column="0" Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Command="New" />
+            </MenuItem>
+        </Menu>
+        <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding CurrentView}" Margin="10" />
+        <Separator Grid.Column="0" Grid.Row="2" />
+        <DockPanel Grid.Column="0" Grid.Row="3">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <Button Style="{StaticResource Navigation}" Command="{Binding PrevStep}">Back</Button>
+                <Button Style="{StaticResource Navigation}" Command="{Binding NextStep}">Next</Button>
+                <Button Style="{StaticResource Navigation}" Command="{Binding FinishStep}">Finish</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left">
+                <Button Style="{StaticResource Navigation}" DockPanel.Dock="Left">Help</Button>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

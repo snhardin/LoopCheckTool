@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <system:String x:Key="Browse">Browse</system:String>
+    <system:String x:Key="HeaderSelectionBlurb">Select the column to use as the IO Type.</system:String>
+    <system:String x:Key="IgnoreErrors">Ignore Errors</system:String>
+    <system:String x:Key="InputFileBlurb">
+        Specify the input Excel file (the IO List) and the column to look for the IO Type in.
+        \n\n
+        If needed, please see the help file for the expected format.
+    </system:String>
+    <system:String x:Key="InputFileLabel">Input File:</system:String>
+    <system:String x:Key="SheetLabel">Sheet:</system:String>
+    <system:String x:Key="IntroPageTitle">Welcome to the Loop Check Generation Wizard!</system:String>
+    <system:String x:Key="IntroPageBlurb">
+        This tool can be used to fill in Word Document (.DOCX) templates with information
+        retrieved from an Excel document. The generated Word Documents are then merged into
+        one big document.
+        \n\n
+        Its intended use is for Loop Check documentation generation. Each IO Type should have
+        its own Word Document template in a folder. Your IO List should be in its own Excel file
+        and each tag should have its own line.\n
+        Using the tool, a Word Document template will be selected for each tag in the IO List.
+        This template will be filled in from information retrieved for that tag. Once all tags
+        have been processed, one large Word Document will be generated in the end.
+        \n\n
+        Made with love by Scott "Dgigs" Hardin &lt;3.
+        \n\n
+        To get started, click on the "Next" button.
+    </system:String>
+    <system:String x:Key="ModifyMappings">Modify Mappings</system:String>
+    <system:String x:Key="TemplateSelectionBlurb">
+        Select the folder where all of the Word Document templates are kept for each IO Type.
+        \n\n
+        When the tool runs, the template will be selected based on the value of the column
+        selected in the previous step.
+    </system:String>
+    <system:String x:Key="TemplateSelectionLabel">Template Folder:</system:String>
+</ResourceDictionary>

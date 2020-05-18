@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:LoopCheckTool.Wizard.ViewModels"
+                    xmlns:utilities="clr-namespace:LoopCheckTool.Wizard.Utilities">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="./Styles.xaml" />
+        <ResourceDictionary Source="./I18nDictionary.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <utilities:I18nNewLineConverter x:Key="i18nNewLineConverter" />
+    <DataTemplate DataType="{x:Type viewModels:IntroPageViewModel}">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Label Style="{StaticResource Title}" Content="{StaticResource IntroPageTitle}" />
+            <TextBlock Style="{StaticResource Blurb}"
+                       Text="{Binding Source={StaticResource IntroPageBlurb}, Converter={StaticResource i18nNewLineConverter},  Mode=OneWay}" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

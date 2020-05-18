@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Wizard", "..\LoopCheckTool.Wizard\LoopCheckTool.Wizard.csproj", "{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Lib", "..\LoopCheckTool.Lib\LoopCheckTool.Lib.csproj", "{653DAAA7-5002-42DA-9447-74210A366726}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8362618E-19D5-4052-8188-38B38A2DE2F2}
+	EndGlobalSection
+EndGlobal
