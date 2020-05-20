@@ -28,13 +28,28 @@ namespace LoopCheckTool.Lib.Document
             string[] explosion = instruction.Split('"');
             if (explosion.Length != 3)
             {
-                throw new WordWriterException("Unrecognized field instruction format.");
+                return TransformFieldPropertyUsingWhitespace(instruction, suffix);
             }
             else
             {
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
                 return (string.Join("\"", explosion), oldKey, explosion[1]);
+            }
+        }
+
+        private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
+        {
+            string[] explosion = instruction.Split(null);
+            if (explosion.Length != 3)
+            {
+                throw new WordWriterException("Unrecognized field instruction format.");
+            }
+            else
+            {
+                string oldKey = explosion[1];
+                explosion[1] = explosion[1] + "_" + suffix;
+                return (string.Join(" ", explosion), oldKey, explosion[1]);
             }
         }
 
