@@ -7,7 +7,8 @@
         xmlns:utilities="clr-namespace:LoopCheckTool.Wizard.Utilities"
         xmlns:viewModels="clr-namespace:LoopCheckTool.Wizard.ViewModels"
         mc:Ignorable="d"
-        Title="Loop Check Generation Wizard" Height="400" Width="500">
+        Title="Loop Check Generation Wizard" Height="400" Width="500"
+        Name="winMain" ResizeMode="NoResize">
     <Window.DataContext>
         <viewModels:AppViewModel />
     </Window.DataContext>
@@ -19,6 +20,7 @@
                 <ResourceDictionary Source="./Resources/InputFileDictionary.xaml" />
                 <ResourceDictionary Source="./Resources/HeaderSelectionDictionary.xaml" />
                 <ResourceDictionary Source="./Resources/TemplateSelectionDictionary.xaml" />
+                <ResourceDictionary Source="./Resources/ExtraOptionsDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -27,23 +29,17 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu VerticalAlignment="Top" Grid.Column="0" Grid.Row="0">
-            <MenuItem Header="_File">
-                <MenuItem Command="New" />
-            </MenuItem>
-        </Menu>
-        <ContentControl Grid.Column="0" Grid.Row="1" Content="{Binding CurrentView}" Margin="10" />
-        <Separator Grid.Column="0" Grid.Row="2" />
-        <DockPanel Grid.Column="0" Grid.Row="3">
+        <ContentControl Grid.Column="0" Grid.Row="0" Content="{Binding CurrentView}" Margin="10" />
+        <Separator Grid.Column="0" Grid.Row="1" />
+        <DockPanel Grid.Column="0" Grid.Row="2">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
                 <Button Style="{StaticResource Navigation}" Command="{Binding PrevStep}">Back</Button>
                 <Button Style="{StaticResource Navigation}" Command="{Binding NextStep}">Next</Button>
-                <Button Style="{StaticResource Navigation}" Command="{Binding FinishStep}">Finish</Button>
+                <Button Style="{StaticResource Navigation}" Command="{Binding FinishStep}" CommandParameter="{Binding ElementName=winMain}">Finish</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left">
                 <Button Style="{StaticResource Navigation}" DockPanel.Dock="Left">Help</Button>

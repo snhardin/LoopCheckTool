@@ -1,8 +1,11 @@
-﻿using System;
+﻿using LoopCheckTool.Wizard.Utilities;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace LoopCheckTool.Wizard.ViewModels
 {
@@ -27,11 +30,27 @@ namespace LoopCheckTool.Wizard.ViewModels
             {
                 _templateFolderPath = value;
                 OnPropertyChanged(nameof(TemplateFolderPath));
+                OnPropertyChanged(nameof(TemplateFolderSpecified));
             }
         }
 
+        /// <summary>
+        /// Helper property for determining if the input
+        /// file path has been specified or not
+        /// </summary>
+        private bool TemplateFolderSpecified
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(_templateFolderPath) && !_templateFolderPath.Equals(DEFAULT_INPUT_FOLDER);
+            }
+        }
+
+        public ICommand btnBrowse_OnClick { get; }
+
         public TemplateSelectionViewModel(WizardPageViewModel prev) : base(prev)
         {
+            btnBrowse_OnClick = new CustomCommand(btnBrowse_CanExecute, btnBrowse_Execute);
             _templateFolderPath = DEFAULT_INPUT_FOLDER;
             Next = new ExtraOptionsViewModel(this);
         }
@@ -55,6 +74,25 @@ namespace LoopCheckTool.Wizard.ViewModels
         public override void PrevButton_OnClicked()
         {
             // Do nothing.
+        }
+
+        public bool btnBrowse_CanExecute(object parameters)
+        {
+            return true;
+        }
+
+        public void btnBrowse_Execute(object parameters)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog()
+            {
+                InitialDirectory = Utility.GetInitialDirectory(TemplateFolderPath, TemplateFolderSpecified),
+                IsFolderPicker = true,
+            };
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                TemplateFolderPath = dialog.FileName;
+            }
         }
     }
 }

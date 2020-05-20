@@ -175,7 +175,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             {
                 CheckFileExists = true,
                 Filter = "All Files (*.*)|*.*",
-                InitialDirectory = GetInitialDirectory(InputFileName),
+                InitialDirectory = Utility.GetInitialDirectory(InputFileName, InputFileSpecified),
                 Multiselect = false,
             };
 
@@ -201,29 +201,6 @@ namespace LoopCheckTool.Wizard.ViewModels
                     MessageBox.Show($"Error while opening file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets the initial directory for the browse modal. If it
-        /// can't figure it out, it uses My Documents by default.
-        /// </summary>
-        /// <param name="directory">The initial directory to try</param>
-        /// <returns>The initial directory to set for the browse modal</returns>
-        private string GetInitialDirectory(string directory)
-        {
-            try
-            {
-                if (InputFileSpecified)
-                {
-                    return Path.GetDirectoryName(directory);
-                }
-            }
-            catch
-            {
-                // Swallow the error. We're just going to use the default.
-            }
-
-            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
         private void LoadHeaders()

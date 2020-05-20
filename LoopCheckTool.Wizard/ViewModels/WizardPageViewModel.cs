@@ -51,6 +51,11 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         public abstract void PrevButton_OnClicked();
 
+        public virtual DocumentGenerationModel FinishButton_OnClicked()
+        {
+            return Model;
+        }
+
         public virtual void OnNavigateFromNextButton() { /* Do nothing */ }
 
         /// <summary>
