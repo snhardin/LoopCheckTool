@@ -204,7 +204,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
                 else
                 {
-                    return c.CellValue.Text;
+                    return c.CellValue?.Text;
                 }
             }
 
@@ -219,7 +219,11 @@ namespace LoopCheckTool.Lib.Spreadsheet
                     row = GetCellRow(cell);
                     if (headers.TryGetValue(cellColumn, out string header))
                     {
-                        keyValues.Add(header, GetCellValue(cell));
+                        string val = GetCellValue(cell);
+                        if (val != null)
+                        {
+                            keyValues.Add(header, val);
+                        }
                     }
                 }
 
