@@ -52,13 +52,11 @@ namespace LoopCheckTool.Wizard.ViewModels
         {
             btnBrowse_OnClick = new CustomCommand(btnBrowse_CanExecute, btnBrowse_Execute);
             _templateFolderPath = DEFAULT_INPUT_FOLDER;
-            Next = new ExtraOptionsViewModel(this);
         }
 
         public override bool FinishButton_CanExecute()
         {
-            // Use the same logic as the next button.
-            return NextButton_CanExecute();
+            return false;
         }
 
         public override bool NextButton_CanExecute()
@@ -66,14 +64,13 @@ namespace LoopCheckTool.Wizard.ViewModels
             return !string.IsNullOrEmpty(TemplateFolderPath) && !TemplateFolderPath.Equals(DEFAULT_INPUT_FOLDER);
         }
 
-        public override void NextButton_OnClicked()
+        public override void NextButton_BeforeClicked()
         {
             Model.TemplatesPath = TemplateFolderPath;
-        }
-
-        public override void PrevButton_OnClicked()
-        {
-            // Do nothing.
+            if (Next == null)
+            {
+                Next = new OutputFileViewModel(this);
+            }
         }
 
         public bool btnBrowse_CanExecute(object parameters)

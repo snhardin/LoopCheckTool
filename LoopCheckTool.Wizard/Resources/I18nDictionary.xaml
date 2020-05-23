@@ -10,6 +10,11 @@
         If needed, please see the help file for the expected format.
     </system:String>
     <system:String x:Key="InputFileLabel">Input File:</system:String>
+    <system:String x:Key="OutputFileBlurb">
+        Specify where to save the resulting Loop Check DOCX file. A log file will also be saved to the
+        same location.
+    </system:String>
+    <system:String x:Key="OutputFileLabel">Output File:</system:String>
     <system:String x:Key="SheetLabel">Sheet:</system:String>
     <system:String x:Key="IntroPageTitle">Welcome to the Loop Check Generation Wizard!</system:String>
     <system:String x:Key="IntroPageBlurb">

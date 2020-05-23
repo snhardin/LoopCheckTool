@@ -209,8 +209,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             {
                 try
                 {
-                    // ToList() forces evaluation.
-                    Headers = Reader.GetHeader(SelectedSheet).ToList();
+                    Headers = Reader.GetHeader(SelectedSheet);
                 }
                 catch (ExcelReader.ExcelReaderException)
                 {
@@ -220,7 +219,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             }
         }
 
-        public override void NextButton_OnClicked()
+        public override void NextButton_BeforeClicked()
         {
             // Commit data to Model when advancing to the next page.
             Model.Reader = Reader;
@@ -228,7 +227,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             Next = new HeaderSelectionViewModel(this);
         }
 
-        public override void PrevButton_OnClicked()
+        public override void PrevButton_BeforeClicked()
         {
             ResetToDefaults();
         }

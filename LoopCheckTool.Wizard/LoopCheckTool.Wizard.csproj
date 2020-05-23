@@ -45,7 +45,12 @@
       <HintPath>..\Solutions\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -78,9 +83,9 @@
     <Compile Include="ViewModels\InputFileViewModel.cs" />
     <Compile Include="ViewModels\IntroPageViewModel.cs" />
     <Compile Include="ViewModels\HeaderSelectionViewModel.cs" />
+    <Compile Include="ViewModels\OutputFileViewModel.cs" />
     <Compile Include="ViewModels\TemplateSelectionViewModel.cs" />
     <Compile Include="ViewModels\WizardPageViewModel.cs" />
-    <Compile Include="ViewModels\WizardPageViewModelFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,6 +107,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\InputFileDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\OutputFileDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

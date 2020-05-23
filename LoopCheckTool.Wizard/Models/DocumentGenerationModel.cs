@@ -11,6 +11,7 @@ namespace LoopCheckTool.Wizard.Models
     {
         #region Main Required Options
         public string Header { get; set; }
+        public string OutputPath { get; set; }
         public ExcelReader Reader { get; set; }
         public ExcelReader.Worksheet Sheet { get; set; }
         public string TemplatesPath { get; set; }

@@ -1,7 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using LoopCheckTool.Lib.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,65 +12,98 @@ namespace LoopCheckTool.Lib.Spreadsheet
 {
     public class ExcelReader : IDisposable
     {
-        private static readonly log4net.ILog logger = Logger.GetOrLoadLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private SpreadsheetDocument document;
 
         public ExcelReader(string fileName)
         {
-            document = SpreadsheetDocument.Open(fileName, false);
+            try
+            {
+                document = SpreadsheetDocument.Open(fileName, false);
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "An error occurred while creating the Excel Reader");
+                throw ex;
+            }
         }
 
         public void Dispose()
         {
-            document.Close();
+            try
+            {
+                document.Close();
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "An error occurred while disposing of the Excel Reader");
+                throw ex;
+            }
         }
 
         public IEnumerable<Worksheet> GetWorksheets()
         {
-            return document.WorkbookPart.Workbook.Descendants<Sheet>().Select(s => new Worksheet(s.Id.Value, s.Name.Value));
+            try
+            {
+                return document.WorkbookPart.Workbook.Descendants<Sheet>().Select(s => new Worksheet(s.Id.Value, s.Name.Value));
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "An error occurred while getting spreadsheets.");
+                throw ex;
+            }
         }
 
-        public IEnumerable<string> GetHeader(Worksheet worksheet)
+        public IList<string> GetHeader(Worksheet worksheet)
         {
-            SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
-
-            WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
-            using (OpenXmlReader reader = OpenXmlReader.Create(worksheetData))
+            try
             {
-                // Read until a Row object is found.
-                while (reader.Read())
+                List<string> result = new List<string>();
+                SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
+
+                WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
+                using (OpenXmlReader reader = OpenXmlReader.Create(worksheetData))
                 {
-                    if (reader.ElementType == typeof(Row))
+                    // Read until a Row object is found.
+                    while (reader.Read())
                     {
-                        if (reader.ReadFirstChild())
+                        if (reader.ElementType == typeof(Row))
                         {
-                            do
+                            if (reader.ReadFirstChild())
                             {
-                                if (reader.ElementType == typeof(Cell))
+                                do
                                 {
-                                    Cell c = (Cell)reader.LoadCurrentElement();
-                                    if (c.DataType != null && c.DataType == CellValues.SharedString)
+                                    if (reader.ElementType == typeof(Cell))
                                     {
-                                        yield return sharedStrings.ElementAt(int.Parse(c.CellValue.Text)).InnerText;
+                                        Cell c = (Cell)reader.LoadCurrentElement();
+                                        if (c.DataType != null && c.DataType == CellValues.SharedString)
+                                        {
+                                            result.Add(sharedStrings.ElementAt(int.Parse(c.CellValue.Text)).InnerText);
+                                        }
+                                        else
+                                        {
+                                            result.Add(c.CellValue.Text);
+                                        }
                                     }
-                                    else
-                                    {
-                                        yield return c.CellValue.Text;
-                                    }
-                                }
-                            } while (reader.ReadNextSibling());
+                                } while (reader.ReadNextSibling());
 
-                            yield break;
+                                return result;
+                            }
+
+                            // If logic reaches here, then this row had no cells.
+                            // Skip to the next row and check.
+                            Logger.Warn("Found a row with no cells.");
                         }
-
-                        // If logic reaches here, then this row had no cells.
-                        // Skip to the next row and check.
-                        logger.Warn("Found a row with no cells.");
                     }
                 }
-            }
 
-            throw new ExcelReaderException("No header found for worksheet.");
+                throw new ExcelReaderException("No header found for worksheet.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "An error occurred while getting header.");
+                throw ex;
+            }
         }
 
         public RowReaderContext CreateRowReader(Worksheet worksheet)
@@ -99,10 +131,18 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
             public RowReaderContext(SpreadsheetDocument document, Worksheet worksheet)
             {
-                this.document = document;
-                WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
-                reader = OpenXmlReader.Create(worksheetData);
-                headers = LoadHeaders();
+                try
+                {
+                    this.document = document;
+                    WorksheetPart worksheetData = (WorksheetPart)document.WorkbookPart.GetPartById(worksheet.ID);
+                    reader = OpenXmlReader.Create(worksheetData);
+                    headers = LoadHeaders();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Fatal(ex, "An error occurred while creating a RowReaderContext");
+                    throw ex;
+                }
             }
 
             private bool ReadNextRow(Action<Cell> func)
@@ -128,7 +168,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
                         // If logic reaches here, then this row had no cells.
                         // Skip to the next row and check.
-                        logger.Warn("Found a row with no cells.");
+                        Logger.Warn("Found a row with no cells.");
                     }
                 }
 
@@ -210,39 +250,47 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
             public IDictionary<string, string> ReadNextRow()
             {
-                Dictionary<string, string> keyValues = new Dictionary<string, string>();
-                uint row = uint.MaxValue;
-
-                void func(Cell cell)
+                try
                 {
-                    string cellColumn = GetCellColumn(cell);
-                    row = GetCellRow(cell);
-                    if (headers.TryGetValue(cellColumn, out string header))
+                    Dictionary<string, string> keyValues = new Dictionary<string, string>();
+                    uint row = uint.MaxValue;
+
+                    void func(Cell cell)
                     {
-                        string val = GetCellValue(cell);
-                        if (val != null)
+                        string cellColumn = GetCellColumn(cell);
+                        row = GetCellRow(cell);
+                        if (headers.TryGetValue(cellColumn, out string header))
                         {
-                            keyValues.Add(header, val);
+                            string val = GetCellValue(cell);
+                            if (val != null)
+                            {
+                                keyValues.Add(header, val);
+                            }
                         }
                     }
-                }
 
-                if (ReadNextRow(func))
-                {
-                    // Now check if there were any columns with empty cells.
-                    IEnumerable<string> missingHeaders = headers.Values.Except(keyValues.Keys);
-                    foreach (string missingHeader in missingHeaders)
+                    if (ReadNextRow(func))
                     {
-                        logger.Warn($"Cell for column \"{missingHeader}\" missing for row \"{row}\".");
-                        keyValues.Add(missingHeader, "");
-                    }
+                        // Now check if there were any columns with empty cells.
+                        IEnumerable<string> missingHeaders = headers.Values.Except(keyValues.Keys);
+                        foreach (string missingHeader in missingHeaders)
+                        {
+                            Logger.Warn($"Cell for column \"{missingHeader}\" missing for row \"{row}\".");
+                            keyValues.Add(missingHeader, "");
+                        }
 
-                    return keyValues;
+                        return keyValues;
+                    }
+                    else
+                    {
+                        // There are no more rows left.
+                        return null;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // There are no more rows left.
-                    return null;
+                    Logger.Fatal(ex, "An error occurred while reading the next row.");
+                    throw ex;
                 }
             }
 

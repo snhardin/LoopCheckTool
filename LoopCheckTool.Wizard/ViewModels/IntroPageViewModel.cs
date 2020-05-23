@@ -20,14 +20,12 @@ namespace LoopCheckTool.Wizard.ViewModels
             return true;
         }
 
-        public override void NextButton_OnClicked()
+        public override void NextButton_BeforeClicked()
         {
-            Next = new InputFileViewModel(this);
-        }
-
-        public override void PrevButton_OnClicked()
-        {
-            // This cannot happen on this page.
+            if (Next == null)
+            {
+                Next = new InputFileViewModel(this);
+            }
         }
     }
 }

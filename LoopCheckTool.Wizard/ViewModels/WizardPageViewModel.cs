@@ -10,7 +10,7 @@ namespace LoopCheckTool.Wizard.ViewModels
 {
     public abstract class WizardPageViewModel : OnPropertyChangedNotifier
     {
-        protected DocumentGenerationModel Model { get; }
+        public DocumentGenerationModel Model { get; }
 
         public WizardPageViewModel(WizardPageViewModel prev)
         {
@@ -41,27 +41,36 @@ namespace LoopCheckTool.Wizard.ViewModels
         public abstract bool FinishButton_CanExecute();
 
         /// <summary>
+        /// Executed right before the Finish button is clicked.
+        /// </summary>
+        /// <returns></returns>
+        public virtual void FinishButton_BeforeClicked() { }
+
+        /// <summary>
         /// Determines whether or not the user may advance to the
         /// next page of the Wizard on the current step.
         /// </summary>
         /// <returns>True if Next button can be clicked. False if it cannot.</returns>
         public abstract bool NextButton_CanExecute();
 
-        public abstract void NextButton_OnClicked();
-
-        public abstract void PrevButton_OnClicked();
-
-        public virtual DocumentGenerationModel FinishButton_OnClicked()
-        {
-            return Model;
-        }
-
-        public virtual void OnNavigateFromNextButton() { /* Do nothing */ }
+        /// <summary>
+        /// Executed right before the Next button is clicked.
+        /// </summary>
+        public virtual void NextButton_BeforeClicked() { }
 
         /// <summary>
-        /// Called when the user navigates to the page by clicking on the "Back"
-        /// button.
+        /// Executed right before the Prev button is clicked.
         /// </summary>
-        public virtual void OnNavigateFromPrevButton() { /* Do nothing */ }
+        public virtual void PrevButton_BeforeClicked() { }
+
+        /// <summary>
+        /// Executed when the page is navigated to from the Next button.
+        /// </summary>
+        public virtual void OnNavigateFromNextButton() { }
+
+        /// <summary>
+        /// Executed when the page is navigated to from the Prev button.
+        /// </summary>
+        public virtual void OnNavigateFromPrevButton() { }
     }
 }

@@ -16,8 +16,6 @@ namespace LoopCheckTool.Wizard.ViewModels
 {
     public class AppViewModel : OnPropertyChangedNotifier
     {
-        private const short NUM_OUTPUT_TRIES = 3;
-
         private WizardPageViewModel _currentView;
 
         public WizardPageViewModel CurrentView
@@ -53,8 +51,10 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         private void FinishStep_Execute(object parameters)
         {
-            DocumentGenerationModel model = CurrentView.FinishButton_OnClicked();
+            CurrentView.FinishButton_BeforeClicked();
+            DocumentGenerationModel model = CurrentView.Model;
 
+            using (StreamWriter logger = File.AppendText(model.OutputPath + ".log"))
             using (ExcelReader.RowReaderContext rowReader = model.Reader.CreateRowReader(model.Sheet))
             {
                 uint errors = 0;
@@ -110,8 +110,7 @@ namespace LoopCheckTool.Wizard.ViewModels
                     {
                         if (!model.IgnoreErrors)
                         {
-                            string msg = $"An error occurred while attempting to use the Loop Check Library: \"{ex.Message}\"\n" +
-                                $"IO List row {ex.AffectedRow}.";
+                            string msg = $"An error occurred while attempting to use the Loop Check Library: \"{ex.Message}\"";
                             if (ex.InnerException != null)
                             {
                                 msg += $"\nThe inner exception's message is: \"{ex.InnerException.Message}\"";
@@ -126,10 +125,9 @@ namespace LoopCheckTool.Wizard.ViewModels
                                 return;
                             }
                         }
-                        else
-                        {
-                            // TODO: Maybe log them somewhere?
-                        }
+
+                        logger.WriteLine("A row was skipped while processing:");
+                        logger.WriteLine(ex.ToString());
 
                         errors++;
                     }
@@ -137,28 +135,7 @@ namespace LoopCheckTool.Wizard.ViewModels
 
                 using (MemoryStream export = writer.ExportDocument())
                 {
-                    OpenFileDialog dialog = new OpenFileDialog()
-                    {
-                        CheckFileExists = false,
-                        CheckPathExists = true,
-                        Filter = "Microsoft Word Documents (*.docx)|*.docx|All Files (*.*)|*.*",
-                        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                        Multiselect = false,
-                    };
-
-                    short attempts;
-                    bool? lastResult;
-                    for (attempts = 0, lastResult = dialog.ShowDialog(); attempts < NUM_OUTPUT_TRIES && lastResult != true; attempts++) { }
-                    
-                    if (lastResult == true)
-                    {
-                        File.WriteAllBytes(dialog.FileName, export.ToArray());
-                        MessageBox.Show($"Document generation finished! {errors} errors occurred.", "Done", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Failed to select output file. I give up!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    File.WriteAllBytes(model.OutputPath, export.ToArray());
                 }
             }
 
@@ -175,7 +152,7 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         private void NextStep_Execute(object parameters)
         {
-            CurrentView.NextButton_OnClicked();
+            CurrentView.NextButton_BeforeClicked();
             CurrentView = CurrentView.Next;
             CurrentView.OnNavigateFromNextButton();
         }
@@ -187,7 +164,7 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         private void PrevStep_Execute(object parameters)
         {
-            CurrentView.PrevButton_OnClicked();
+            CurrentView.PrevButton_BeforeClicked();
             CurrentView = CurrentView.Prev;
             CurrentView.OnNavigateFromPrevButton();
         }

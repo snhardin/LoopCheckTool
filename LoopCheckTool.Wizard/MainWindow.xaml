@@ -20,6 +20,7 @@
                 <ResourceDictionary Source="./Resources/InputFileDictionary.xaml" />
                 <ResourceDictionary Source="./Resources/HeaderSelectionDictionary.xaml" />
                 <ResourceDictionary Source="./Resources/TemplateSelectionDictionary.xaml" />
+                <ResourceDictionary Source="./Resources/OutputFileDictionary.xaml" />
                 <ResourceDictionary Source="./Resources/ExtraOptionsDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

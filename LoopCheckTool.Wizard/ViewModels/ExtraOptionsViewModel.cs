@@ -32,15 +32,5 @@ namespace LoopCheckTool.Wizard.ViewModels
         {
             return false;
         }
-
-        public override void NextButton_OnClicked()
-        {
-            // Should never happen.
-        }
-
-        public override void PrevButton_OnClicked()
-        {
-            // Do nothing.
-        }
     }
 }

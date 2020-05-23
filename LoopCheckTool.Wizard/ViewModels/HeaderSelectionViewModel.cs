@@ -44,16 +44,14 @@ namespace LoopCheckTool.Wizard.ViewModels
             return !string.IsNullOrEmpty(SelectedHeader);
         }
 
-        public override void NextButton_OnClicked()
+        public override void NextButton_BeforeClicked()
         {
             // Commit data to the model
             Model.Header = SelectedHeader;
-            Next = new TemplateSelectionViewModel(this);
-        }
-
-        public override void PrevButton_OnClicked()
-        {
-            // Do nothing.
+            if (Next == null)
+            {
+                Next = new TemplateSelectionViewModel(this);
+            }
         }
     }
 }

@@ -6,11 +6,10 @@
         <ResourceDictionary Source="./I18nDictionary.xaml" />
         <ResourceDictionary Source="./Styles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <utilities:I18nNewLineConverter x:Key="i18nNewLineConverter" />
-    <DataTemplate DataType="{x:Type viewModels:InputFileViewModel}">
+    <DataTemplate DataType="{x:Type viewModels:OutputFileViewModel}">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TextBlock Style="{StaticResource Blurb}"
-                       Text="{Binding Source={StaticResource InputFileBlurb}, Converter={StaticResource i18nNewLineConverter}}" />
+                       Text="{StaticResource OutputFileBlurb}" />
             <Grid Width="400" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -19,36 +18,22 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0"
                        Grid.Row="0"
                        Style="{StaticResource BaseLabel}"
                        Margin="0 0 10 0"
-                       Content="{StaticResource InputFileLabel}" />
+                       Content="{StaticResource OutputFileLabel}" />
                 <TextBlock Grid.Column="1"
                            Grid.Row="0"
                            TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Center"
-                           Text="{Binding InputFileName}" />
+                           Text="{Binding OutputFileName}" />
                 <Button Grid.Column="2"
                         Grid.Row="0"
                         Style="{StaticResource BaseButton}"
                         Content="{StaticResource Browse}"
                         Command="{Binding btnBrowse_OnClick}" />
-                <Label Grid.Column="0"
-                       Grid.Row="1"
-                       Style="{StaticResource BaseLabel}"
-                       Content="{StaticResource SheetLabel}" />
-                <ComboBox Grid.Column="1"
-                          Grid.Row="1"
-                          Grid.ColumnSpan="2"
-                          Margin="0 0 5 0"
-                          ItemsSource="{Binding Sheets}"
-                          DisplayMemberPath="Name"
-                          SelectedValuePath="ID"
-                          SelectedItem="{Binding SelectedSheet}"
-                          IsEnabled="{Binding HasSheets}" />
             </Grid>
         </StackPanel>
     </DataTemplate>
