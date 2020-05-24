@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LoopCheckTool.Wizard"
-             StartupUri="MainWindow.xaml">
+             xmlns:services="clr-namespace:LoopCheckTool.Wizard.Services"
+             xmlns:vm="clr-namespace:LoopCheckTool.Wizard.ViewModels"
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         
     </Application.Resources>

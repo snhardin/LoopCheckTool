@@ -70,9 +70,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\DocumentGenerationModel.cs" />
-    <Compile Include="UserControls\FileBrowser.xaml.cs">
-      <DependentUpon>FileBrowser.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Services\ILoadingDialogService.cs" />
+    <Compile Include="Services\LoadingDialogService.cs" />
+    <Compile Include="Services\LoadingDialogViewModel.cs" />
     <Compile Include="Utilities\CustomCommand.cs" />
     <Compile Include="Utilities\I18nNewLineConverter.cs" />
     <Compile Include="Utilities\LibraryException.cs" />
@@ -86,7 +86,10 @@
     <Compile Include="ViewModels\OutputFileViewModel.cs" />
     <Compile Include="ViewModels\TemplateSelectionViewModel.cs" />
     <Compile Include="ViewModels\WizardPageViewModel.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="Views\LoadingDialogWindow.xaml.cs">
+      <DependentUpon>LoadingDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -94,7 +97,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -130,7 +133,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\FileBrowser.xaml">
+    <Page Include="Views\LoadingDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,5 +171,6 @@
       <Name>LoopCheckTool.Lib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

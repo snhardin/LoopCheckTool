@@ -1,13 +1,17 @@
 ﻿using LoopCheckTool.Lib.Document;
 using LoopCheckTool.Lib.Spreadsheet;
 using LoopCheckTool.Wizard.Models;
+using LoopCheckTool.Wizard.Services;
 using LoopCheckTool.Wizard.Utilities;
+using LoopCheckTool.Wizard.Views;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,6 +21,10 @@ namespace LoopCheckTool.Wizard.ViewModels
     public class AppViewModel : OnPropertyChangedNotifier
     {
         private WizardPageViewModel _currentView;
+        private AutoResetEvent _mutex;
+        private BackgroundWorker _worker;
+
+        private ILoadingDialogService LoadingService;
 
         public WizardPageViewModel CurrentView
         {
@@ -35,9 +43,21 @@ namespace LoopCheckTool.Wizard.ViewModels
         public ICommand NextStep { get; }
         public ICommand PrevStep { get; }
 
-        public AppViewModel()
+        public AppViewModel(ILoadingDialogService loadingService)
         {
+            LoadingService = loadingService;
+
             _currentView = new IntroPageViewModel();
+            _mutex = new AutoResetEvent(false);
+            _worker = new BackgroundWorker()
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true,
+            };
+
+            _worker.DoWork += BackgroundWorker_DoWork;
+            _worker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
+            _worker.ProgressChanged += BackgroundWorker_ProgressChanged;
 
             FinishStep = new CustomCommand(FinishStep_CanExecute, FinishStep_Execute);
             NextStep = new CustomCommand(NextStep_CanExecute, NextStep_Execute);
@@ -54,6 +74,38 @@ namespace LoopCheckTool.Wizard.ViewModels
             CurrentView.FinishButton_BeforeClicked();
             DocumentGenerationModel model = CurrentView.Model;
 
+            _worker.RunWorkerAsync(model);
+            LoadingService.OpenLoadingDialog();
+        }
+
+        private bool NextStep_CanExecute(object parameters)
+        {
+            return CurrentView.NextButton_CanExecute();
+        }
+
+        private void NextStep_Execute(object parameters)
+        {
+            CurrentView.NextButton_BeforeClicked();
+            CurrentView = CurrentView.Next;
+            CurrentView.OnNavigateFromNextButton();
+        }
+
+        private bool PrevStep_CanExecute(object parameters)
+        {
+            return CurrentView.Prev != null;
+        }
+
+        private void PrevStep_Execute(object parameters)
+        {
+            CurrentView.PrevButton_BeforeClicked();
+            CurrentView = CurrentView.Prev;
+            CurrentView.OnNavigateFromPrevButton();
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            DocumentGenerationModel model = (DocumentGenerationModel)e.Argument;
+
             using (StreamWriter logger = File.AppendText(model.OutputPath + ".log"))
             using (ExcelReader.RowReaderContext rowReader = model.Reader.CreateRowReader(model.Sheet))
             {
@@ -64,6 +116,7 @@ namespace LoopCheckTool.Wizard.ViewModels
                 {
                     try
                     {
+                        LoadingService.SetLoadingText($"Processing row {i}...");
                         if (!rows.TryGetValue(model.Header, out string templateName))
                         {
                             throw new LibraryException($"No value exists for template key \"{model.Header}\".", i, rows);
@@ -108,6 +161,9 @@ namespace LoopCheckTool.Wizard.ViewModels
                     }
                     catch (LibraryException ex)
                     {
+                        logger.WriteLine("A row was skipped while processing:");
+                        logger.WriteLine(ex.ToString());
+
                         if (!model.IgnoreErrors)
                         {
                             string msg = $"An error occurred while attempting to use the Loop Check Library: \"{ex.Message}\"";
@@ -118,55 +174,81 @@ namespace LoopCheckTool.Wizard.ViewModels
 
                             msg += "\nDo you wish to continue execution? This row will be ignored.";
 
-                            MessageBoxResult result = MessageBox.Show(msg, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                            _worker.ReportProgress(0, new DocumentGenerationState(msg, DocumentGenerationStateType.BlockingMessage));
+                            _mutex.WaitOne();
 
-                            if (result == MessageBoxResult.No)
+                            if (_worker.CancellationPending)
                             {
+                                e.Cancel = true;
                                 return;
                             }
                         }
-
-                        logger.WriteLine("A row was skipped while processing:");
-                        logger.WriteLine(ex.ToString());
 
                         errors++;
                     }
                 }
 
+                LoadingService.SetLoadingText("Writing file to disk...");
                 using (MemoryStream export = writer.ExportDocument())
                 {
                     File.WriteAllBytes(model.OutputPath, export.ToArray());
                 }
-            }
 
-            if (parameters is Window window)
+                e.Result = errors;
+            }
+        }
+
+        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
             {
-                window.Close();
+                throw e.Error;
+            }
+
+            if (!e.Cancelled)
+            {
+                uint errors = (uint)e.Result;
+                MessageBox.Show($"Document generation complete! {errors} errors occurred.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            LoadingService.CloseLoadingDialog();
+        }
+
+        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            DocumentGenerationState state = (DocumentGenerationState)e.UserState;
+            switch (state.Type)
+            {
+                case DocumentGenerationStateType.BlockingMessage:
+                    MessageBoxResult result = MessageBox.Show(state.Content, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                    if (result != MessageBoxResult.Yes)
+                    {
+                        _worker.CancelAsync();
+                    }
+                    _mutex.Set();
+                    break;
+                case DocumentGenerationStateType.Progress:
+                    // Do nothing.
+                    break;
             }
         }
 
-        private bool NextStep_CanExecute(object parameters)
+        private class DocumentGenerationState
         {
-            return CurrentView.NextButton_CanExecute();
+            public string Content { get; }
+            public DocumentGenerationStateType Type { get; }
+
+            public DocumentGenerationState(string content, DocumentGenerationStateType type)
+            {
+                Content = content;
+                Type = type;
+            }
         }
 
-        private void NextStep_Execute(object parameters)
+        private enum DocumentGenerationStateType
         {
-            CurrentView.NextButton_BeforeClicked();
-            CurrentView = CurrentView.Next;
-            CurrentView.OnNavigateFromNextButton();
-        }
-
-        private bool PrevStep_CanExecute(object parameters)
-        {
-            return CurrentView.Prev != null;
-        }
-
-        private void PrevStep_Execute(object parameters)
-        {
-            CurrentView.PrevButton_BeforeClicked();
-            CurrentView = CurrentView.Prev;
-            CurrentView.OnNavigateFromPrevButton();
+            BlockingMessage,
+            Progress,
         }
     }
 }
