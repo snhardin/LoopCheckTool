@@ -64,6 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Commands\CustomCommand.cs" />
     <Compile Include="Model\LoopCheckModel.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -127,4 +130,5 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="../Build/LoopCheckTool.targets" />
 </Project>

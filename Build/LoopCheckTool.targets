@@ -1,0 +1,50 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <BranchFile>$(IntermediateOutputPath)GitBranch</BranchFile>
+        <CustomAssemblyInfoFile>$(IntermediateOutputPath)CustomAssemblyInfo.cs</CustomAssemblyInfoFile>
+        <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
+    </PropertyGroup>
+    <Target Name="CustomAssemblyInfo" BeforeTargets="BeforeBuild">
+        <Exec Command="git -C $(ProjectDir) describe --long --always --dirty &gt; $(HashFile)" />
+        <ReadLinesFromFile File="$(HashFile)">
+            <Output TaskParameter="Lines" ItemName="GitCommit" />
+        </ReadLinesFromFile>
+
+        <Exec Command="git -C $(ProjectDir) rev-parse --abbrev-ref HEAD &gt; $(BranchFile)" />
+        <ReadLinesFromFile File="$(BranchFile)">
+            <Output TaskParameter="Lines" ItemName="GitBranch" />
+        </ReadLinesFromFile>
+
+        <ItemGroup>
+            <Compile Include="$(CustomAssemblyInfoFile)" />
+        </ItemGroup>
+        <ItemGroup>
+            <AssemblyAttributes Include="AssemblyTitle">
+                <_Parameter1>$(AssemblyName)</_Parameter1>
+            </AssemblyAttributes>
+            <AssemblyAttributes Include="AssemblyProduct">
+                <_Parameter1>$(AssemblyName)</_Parameter1>
+            </AssemblyAttributes>
+            <AssemblyAttributes Include="AssemblyVersion">
+                <_Parameter1>0.0.0.0</_Parameter1>
+            </AssemblyAttributes>
+            <AssemblyAttributes Include="AssemblyFileVersion">
+                <_Parameter1>0.0.0.0</_Parameter1>
+            </AssemblyAttributes>
+            <AssemblyAttributes Include="AssemblyMetadata">
+                <_Parameter1>GitCommit</_Parameter1>
+                <_Parameter2>@(GitCommit)</_Parameter2>
+            </AssemblyAttributes>
+            <AssemblyAttributes Include="AssemblyMetadata">
+                <_Parameter1>GitBranch</_Parameter1>
+                <_Parameter2>@(GitBranch)</_Parameter2>
+            </AssemblyAttributes>
+        </ItemGroup>
+        <WriteCodeFragment Language="C#" OutputFile="$(CustomAssemblyInfoFile)" AssemblyAttributes="@(AssemblyAttributes)" />
+    </Target>
+    <Target Name="CleanCustomAssemblyInfo" BeforeTargets="BeforeClean">
+        <Delete Files="$(BranchFile)" />
+        <Delete Files="$(CustomAssemblyInfoFile)" />
+        <Delete Files="$(HashFile)" />
+    </Target>
+</Project>

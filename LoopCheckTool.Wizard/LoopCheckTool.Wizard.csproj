@@ -69,6 +69,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Models\DocumentGenerationModel.cs" />
     <Compile Include="Services\ILoadingDialogService.cs" />
     <Compile Include="Services\LoadingDialogService.cs" />
@@ -173,4 +176,5 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="../Build/LoopCheckTool.targets" />
 </Project>
