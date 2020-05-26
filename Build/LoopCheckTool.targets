@@ -4,7 +4,7 @@
         <CustomAssemblyInfoFile>$(IntermediateOutputPath)CustomAssemblyInfo.cs</CustomAssemblyInfoFile>
         <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
     </PropertyGroup>
-    <Target Name="CustomAssemblyInfo" BeforeTargets="BeforeBuild">
+    <Target Name="CustomAssemblyInfo" BeforeTargets="CoreBuild">
         <Exec Command="git -C $(ProjectDir) describe --long --always --dirty &gt; $(HashFile)" />
         <ReadLinesFromFile File="$(HashFile)">
             <Output TaskParameter="Lines" ItemName="GitCommit" />
@@ -42,7 +42,7 @@
         </ItemGroup>
         <WriteCodeFragment Language="C#" OutputFile="$(CustomAssemblyInfoFile)" AssemblyAttributes="@(AssemblyAttributes)" />
     </Target>
-    <Target Name="CleanCustomAssemblyInfo" BeforeTargets="BeforeClean">
+    <Target Name="CleanCustomAssemblyInfo" BeforeTargets="CoreClean">
         <Delete Files="$(BranchFile)" />
         <Delete Files="$(CustomAssemblyInfoFile)" />
         <Delete Files="$(HashFile)" />
