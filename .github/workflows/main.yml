@@ -22,14 +22,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       
-    - name: Download Visual Studio Installer Projects extension
-      run: |
-        $ProgressPreference = "silentlyContinue"; Invoke-WebRequest https://visualstudioclient.gallerycdn.vsassets.io/extensions/visualstudioclient/microsoftvisualstudio2017installerprojects/0.9.8/1588102164123/InstallerProjects.vsix -OutFile InstallerProjects.vsix
-
-    - name: Install Visual Studio Installer Projects extension
-      run: |
-        & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\resources\app\ServiceHub\Services\Microsoft.VisualStudio.Setup.Service\VSIXInstaller.exe" /quiet InstallerProjects.vsix
-        
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
@@ -41,10 +33,4 @@ jobs:
       
     - name: Build solution
       run: msbuild Solutions\Installer.sln /p:Configuration=Release
-      
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: LoopCheckTool-Installer.msi
-        path: LoopCheckTool.Installer\Release\LoopCheckTool.msi
-        
+
