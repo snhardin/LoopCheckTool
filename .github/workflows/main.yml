@@ -21,7 +21,7 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-
+      
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
@@ -33,10 +33,4 @@ jobs:
       
     - name: Build solution
       run: msbuild Solutions\Installer.sln /p:Configuration=Release
-      
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: LoopCheckTool-Installer.msi
-        path: LoopCheckTool.Installer\Release\LoopCheckTool.msi
-        
+
