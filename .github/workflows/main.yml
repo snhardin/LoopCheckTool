@@ -38,4 +38,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: LoopCheckTool-Installer.msi
-        path: LoopCheckTool.Installer\Release\LoopCheckTool.Installer.msi
+        path: LoopCheckTool.Installer\bin\Release\LoopCheckTool.Installer.msi
