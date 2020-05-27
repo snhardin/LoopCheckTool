@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="552C34A9-912E-414D-8585-12D259A90A45"
+           Name="LoopCheckTool"
+           Language="1033"
+           Version="0.0.0"
+           Manufacturer="Scott Hardin"
+           UpgradeCode="D28E0963-2E86-4D79-BA24-74DA0C24AD2A">
+		<Package Id="*"
+             Keywords="Installer"
+             Description="LoopCheckTool installer"
+             InstallerVersion="200"
+             Languages="1033"
+             Compressed="yes"
+             InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of LoopCheckTool is already installed." />
+		<MediaTemplate />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="INSTALLDIR" Name="LoopCheckTool">
+          <Component Id="FrontendPreReqs" Guid="D9ED692A-FA5F-4EBB-8179-CCC8B01D9648">
+            <File Id="WinAPICodePackDLL" Name="Microsoft.WindowsAPICodePack.dll" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.dll" />
+            <File Id="WinAPICodePackPDB" Name="Microsoft.WindowsAPICodePack.pdb" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.pdb" />
+            <File Id="WinAPICodePackShellDLL" Name="Microsoft.WindowsAPICodePack.Shell.dll" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.Shell.dll" />
+            <File Id="WinAPICodePackShellPDB" Name="Microsoft.WindowsAPICodePack.Shell.pdb" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.Shell.pdb" />
+            <File Id="WinAPICodePackShellXML" Name="Microsoft.WindowsAPICodePack.Shell.xml" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.Shell.xml" />
+            <File Id="WinAPICodePackShellExtensionsDLL" Name="Microsoft.WindowsAPICodePack.ShellExtensions.dll" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.ShellExtensions.dll" />
+            <File Id="WinAPICodePackShellExtensionsPDB" Name="Microsoft.WindowsAPICodePack.ShellExtensions.pdb" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.ShellExtensions.pdb" />
+            <File Id="WinAPICodePackShellExtensionsXML" Name="Microsoft.WindowsAPICodePack.ShellExtensions.xml" Source="$(var.LoopCheckTool.Wizard.TargetDir)Microsoft.WindowsAPICodePack.ShellExtensions.xml" />
+            <File Id="WinAPICodePackXML" Name="Microsoft.WindowsAPICodePack.xml" Source="$(var.LoopCheckTool.Wizard.TargetPath)" />
+          </Component>
+          <Component Id="LoopCheckToolLibrary" Guid="3183BFE9-5BB0-48B6-B737-DBD911A4C68C">
+            <File Id="OpenXmlDLL" Name="DocumentFormat.OpenXml.dll" Source="$(var.LoopCheckTool.Lib.TargetDir)DocumentFormat.OpenXml.dll" />
+            <File Id="OpenXmlXML" Name="DocumentFormat.OpenXml.xml" Source="$(var.LoopCheckTool.Lib.TargetDir)DocumentFormat.OpenXml.xml" />
+            <File Id="LibDLL" Name="LoopCheckTool.Lib.dll" Source="$(var.LoopCheckTool.Lib.TargetDir)LoopCheckTool.Lib.dll" KeyPath="yes" />
+            <File Id="LibDLLConfig" Name="LoopCheckTool.Lib.dll.config" Source="$(var.LoopCheckTool.Lib.TargetDir)LoopCheckTool.Lib.dll.config" />
+            <File Id="LibPDB" Name="LoopCheckTool.Lib.pdb" Source="$(var.LoopCheckTool.Lib.TargetDir)LoopCheckTool.Lib.pdb" />
+            <File Id="NLogConfig" Name="NLog.config" Source="$(var.LoopCheckTool.Lib.TargetDir)NLog.config" />
+            <File Id="NLogDLL" Name="NLog.dll" Source="$(var.LoopCheckTool.Lib.TargetDir)NLog.dll" />
+            <File Id="NLogXML" Name="NLog.xml" Source="$(var.LoopCheckTool.Lib.TargetDir)NLog.xml" />
+            <File Id="PowerToolsDLL" Name="OpenXmlPowerTools.dll" Source="$(var.LoopCheckTool.Lib.TargetDir)OpenXmlPowerTools.dll" />
+            <File Id="PackagingDLL" Name="System.IO.Packaging.dll" Source="$(var.LoopCheckTool.Lib.TargetDir)System.IO.Packaging.dll" />
+            <File Id="PackagingXML" Name="System.IO.Packaging.xml" Source="$(var.LoopCheckTool.Lib.TargetDir)System.IO.Packaging.xml" />
+          </Component>
+          <Component Id="LoopCheckToolWizard" Guid="9E43C1F3-F3CB-4A42-93A3-23EB3DDC607D">
+            <File Id="WizardEXE" Name="LoopCheckTool.Wizard.exe" Source="$(var.LoopCheckTool.Wizard.TargetDir)LoopCheckTool.Wizard.exe" KeyPath="yes" Checksum="yes" />
+            <File Id="WizardEXEConfig" Name="LoopCheckTool.Wizard.exe.config" Source="$(var.LoopCheckTool.Wizard.TargetDir)LoopCheckTool.Wizard.exe.config" />
+            <File Id="WizardPDB" Name="LoopCheckTool.Wizard.pdb" Source="$(var.LoopCheckTool.Wizard.TargetDir)LoopCheckTool.Wizard.pdb" />
+          </Component>
+          <Component Id="LoopCheckToolDesktop" Guid="5AF68549-685C-412F-97C5-DE207714A6DF">
+            <File Id="DesktopEXE" Name="LoopCheckTool.Desktop.exe" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.exe" KeyPath="yes" Checksum="yes" />
+            <File Id="DesktopEXEConfig" Name="LoopCheckTool.Desktop.exe.config" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.exe.config" />
+            <File Id="DesktopPDB" Name="LoopCheckTool.Desktop.pdb" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.pdb" />
+          </Component>
+          <Component Id="LoopCheckToolConsole" Guid="24594817-A291-4491-97FF-5CF10254B221">
+            <File Id="CommandLineDLL" Name="CommandLine.dll" Source="$(var.LoopCheckTool.Console.TargetDir)CommandLine.dll" />
+            <File Id="CommandLineXML" Name="CommandLine.xml" Source="$(var.LoopCheckTool.Console.TargetDir)CommandLine.xml" />
+            <File Id="ConsoleEXE" Name="LoopCheckTool.Console.exe" Source="$(var.LoopCheckTool.Console.TargetDir)LoopCheckTool.Console.exe" KeyPath="yes" Checksum="yes" />
+            <File Id="ConsoleEXEConfig" Name="LoopCheckTool.Console.exe.config" Source="$(var.LoopCheckTool.Console.TargetDir)LoopCheckTool.Console.exe.config" />
+            <File Id="ConsolePDB" Name="LoopCheckTool.Console.pdb" Source="$(var.LoopCheckTool.Console.TargetDir)LoopCheckTool.Console.pdb" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="Complete" Title="LoopCheckTool" Description="The complete LoopCheckTool package." Display="expand"
+             Level="1" ConfigurableDirectory="INSTALLDIR">
+      <Feature Id="DesktopApplication" Title="Test Desktop Application" Level="1000">
+        <ComponentRef Id="FrontendPreReqs" />
+        <ComponentRef Id="LoopCheckToolLibrary" />
+        <ComponentRef Id="LoopCheckToolDesktop" />
+      </Feature>
+      <Feature Id="WizardApplication" Title="Wizard Application" Level="1">
+        <ComponentRef Id="FrontendPreReqs" />
+        <ComponentRef Id="LoopCheckToolLibrary" />
+        <ComponentRef Id="LoopCheckToolWizard" />
+      </Feature>
+      <Feature Id="ConsoleApplication" Title="Console Application" Level="1000">
+        <ComponentRef Id="LoopCheckToolConsole" />
+      </Feature>
+    </Feature>
+
+    <WixVariable Id="WixUILicenseRtf" Value="Resources/license.rtf" />
+    <UIRef Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+	</Product>
+</Wix>
