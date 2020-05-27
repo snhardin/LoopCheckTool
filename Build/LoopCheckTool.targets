@@ -2,6 +2,7 @@
     <PropertyGroup>
         <BranchFile>$(IntermediateOutputPath)GitBranch</BranchFile>
         <CustomAssemblyInfoFile>$(IntermediateOutputPath)CustomAssemblyInfo.cs</CustomAssemblyInfoFile>
+        <GITHUB_RUN_NUMBER Condition=" '$(GITHUB_RUN_NUMBER)' == '' ">0</GITHUB_RUN_NUMBER>
         <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
     </PropertyGroup>
     <Target Name="CustomAssemblyInfo" BeforeTargets="CoreBuild">
@@ -26,10 +27,10 @@
                 <_Parameter1>$(AssemblyName)</_Parameter1>
             </AssemblyAttributes>
             <AssemblyAttributes Include="AssemblyVersion">
-                <_Parameter1>0.0.0.0</_Parameter1>
+                <_Parameter1>0.0.0.0</_Parameter1> <!-- Should be major version only. -->
             </AssemblyAttributes>
             <AssemblyAttributes Include="AssemblyFileVersion">
-                <_Parameter1>0.0.0.0</_Parameter1>
+                <_Parameter1>0.0.0.$(GITHUB_RUN_NUMBER)</_Parameter1>
             </AssemblyAttributes>
             <AssemblyAttributes Include="AssemblyMetadata">
                 <_Parameter1>GitCommit</_Parameter1>

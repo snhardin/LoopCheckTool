@@ -106,7 +106,7 @@ namespace LoopCheckTool.Wizard.ViewModels
         {
             DocumentGenerationModel model = (DocumentGenerationModel)e.Argument;
 
-            using (StreamWriter logger = File.AppendText(model.OutputPath + ".log"))
+            using (StreamWriter logger = File.CreateText(model.OutputPath + ".log"))
             using (ExcelReader.RowReaderContext rowReader = model.Reader.CreateRowReader(model.Sheet))
             {
                 uint errors = 0;
