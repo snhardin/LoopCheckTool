@@ -212,6 +212,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             }
 
             LoadingService.CloseLoadingDialog();
+            App.Current.MainWindow.Close();
         }
 
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
