@@ -85,7 +85,6 @@
     <Compile Include="Services\LoadingDialogService.cs" />
     <Compile Include="Services\LoadingDialogViewModel.cs" />
     <Compile Include="Utilities\CustomCommand.cs" />
-    <Compile Include="Utilities\I18nNewLineConverter.cs" />
     <Compile Include="Utilities\LibraryException.cs" />
     <Compile Include="Utilities\OnPropertyChangedNotifier.cs" />
     <Compile Include="Utilities\Utility.cs" />
@@ -166,6 +165,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

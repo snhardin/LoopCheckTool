@@ -1,16 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:utilities="clr-namespace:LoopCheckTool.Wizard.Utilities"
                     xmlns:viewModels="clr-namespace:LoopCheckTool.Wizard.ViewModels">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="./I18nDictionary.xaml" />
         <ResourceDictionary Source="./Styles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <utilities:I18nNewLineConverter x:Key="i18nNewLineConverter" />
     <DataTemplate DataType="{x:Type viewModels:InputFileViewModel}">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TextBlock Style="{StaticResource Blurb}"
-                       Text="{Binding Source={StaticResource InputFileBlurb}, Converter={StaticResource i18nNewLineConverter}}" />
+                       Text="{StaticResource InputFileBlurb}" />
             <Grid Width="400" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

@@ -1,16 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:utilities="clr-namespace:LoopCheckTool.Wizard.Utilities"
                     xmlns:viewModels="clr-namespace:LoopCheckTool.Wizard.ViewModels">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="./I18nDictionary.xaml" />
         <ResourceDictionary Source="./Styles.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <utilities:I18nNewLineConverter x:Key="i18nNewLineConverter" />
     <DataTemplate DataType="{x:Type viewModels:TemplateSelectionViewModel}">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TextBlock Style="{StaticResource Blurb}"
-                       Text="{Binding Source={StaticResource TemplateSelectionBlurb}, Converter={StaticResource i18nNewLineConverter},  Mode=OneWay}" />
+                       Text="{StaticResource TemplateSelectionBlurb}" />
             <Grid HorizontalAlignment="Left" Width="400">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
