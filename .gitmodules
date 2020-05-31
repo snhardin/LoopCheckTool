@@ -1,3 +1,3 @@
-[submodule "Documentation/themes/hugo-theme-techdoc"]
-	path = Documentation/themes/hugo-theme-techdoc
+[submodule "LoopCheckTool.Documentation/src/themes/hugo-theme-techdoc"]
+	path = LoopCheckTool.Documentation/src/themes/hugo-theme-techdoc
 	url = https://github.com/thingsym/hugo-theme-techdoc.git
