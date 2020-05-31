@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Based on http://sedodream.com/2013/06/01/HijackingTheVisualStudioBuildProcess.aspx -->
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
+    <SrcPath>src\</SrcPath>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <AppFileNameItem>
+      <Visible>false</Visible>
+    </AppFileNameItem>
+    <AppFolderItem>
+      <Visible>false</Visible>
+    </AppFolderItem>
+  </ItemDefinitionGroup>
+
+  <Target Name="Build">
+    <MakeDir Directories="$(OutputPath)" />
+    <Exec Command="hugo --source=$(SrcPath) --destination=..\$(OutputPath)" />
+  </Target>
+  <PropertyGroup>
+    <RebuildDependsOn>
+      Clean;
+      Build;
+    </RebuildDependsOn>
+  </PropertyGroup>
+  <Target Name="Rebuild" DependsOnTargets="$(RebuildDependsOn)" />
+  <Target Name="Clean">
+    <!-- delete all the files in the output folder -->
+    <ItemGroup>
+      <_FilesToDelete Remove="@(_FilesToDelete)" />
+      <_FilesToDelete Include="$(OutputPath)**\*" />
+    </ItemGroup>
+    <Message Text="Deleting files: @(_FilesToDelete)" Importance="high" />
+    <Delete Files="@(_FilesToDelete)" />
+  </Target>
+  <Target Name="GetTargetPath" Returns="@(_OutputPath)">
+    <ItemGroup>
+      <_OutputPath Include="$(OutputPath)index.html" />
+    </ItemGroup>
+  </Target>
+</Project>

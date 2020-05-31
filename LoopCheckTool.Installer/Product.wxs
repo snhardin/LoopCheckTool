@@ -61,24 +61,32 @@
             <File Id="ConsoleEXEConfig" Name="LoopCheckTool.Console.exe.config" Source="$(var.LoopCheckTool.Console.TargetDir)LoopCheckTool.Console.exe.config" />
             <File Id="ConsolePDB" Name="LoopCheckTool.Console.pdb" Source="$(var.LoopCheckTool.Console.TargetDir)LoopCheckTool.Console.pdb" />
           </Component>
+          <Directory Id="DOCSDIR" Name="docs" />
         </Directory>
       </Directory>
     </Directory>
 
     <Feature Id="Complete" Title="LoopCheckTool" Description="The complete LoopCheckTool package." Display="expand"
              Level="1" ConfigurableDirectory="INSTALLDIR">
-      <Feature Id="DesktopApplication" Title="Test Desktop Application" Level="1000">
+      <Feature Id="DesktopApplication" Title="Test Desktop Application" Level="1000"
+               Description="The first interation desktop application initially built for testing.">
         <ComponentRef Id="FrontendPreReqs" />
         <ComponentRef Id="LoopCheckToolLibrary" />
         <ComponentRef Id="LoopCheckToolDesktop" />
       </Feature>
-      <Feature Id="WizardApplication" Title="Wizard Application" Level="1">
+      <Feature Id="WizardApplication" Title="Wizard Application" Level="1"
+               Description="The new step-by-step Wizard desktop application that walks through document generation step-by-step.">
         <ComponentRef Id="FrontendPreReqs" />
         <ComponentRef Id="LoopCheckToolLibrary" />
         <ComponentRef Id="LoopCheckToolWizard" />
       </Feature>
-      <Feature Id="ConsoleApplication" Title="Console Application" Level="1000">
+      <Feature Id="ConsoleApplication" Title="Console Application" Level="1000"
+               Description="The CLI for document generation.">
         <ComponentRef Id="LoopCheckToolConsole" />
+      </Feature>
+      <Feature Id="Documentation" Title="Documentation" Level="1"
+               Description="Documentation for the application.">
+        <ComponentGroupRef Id="LoopCheckToolDocumentation" />
       </Feature>
     </Feature>
 
