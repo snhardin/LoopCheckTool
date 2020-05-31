@@ -28,6 +28,9 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.2
       
+    - name: Install Hugo
+      run: choco install -y hugo
+      
     - name: Restore solution NuGet packages
       run: nuget restore Solutions\Installer.sln
       
