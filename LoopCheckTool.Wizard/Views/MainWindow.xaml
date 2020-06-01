@@ -38,7 +38,8 @@
                 <Button Style="{StaticResource Navigation}" Command="{Binding FinishStep}">Finish</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left">
-                <Button Style="{StaticResource Navigation}" DockPanel.Dock="Left">Help</Button>
+                <Button Style="{StaticResource Navigation}">Help</Button>
+                <Button Style="{StaticResource Navigation}" Command="{Binding AboutCommand}">About</Button>
             </StackPanel>
         </DockPanel>
     </Grid>

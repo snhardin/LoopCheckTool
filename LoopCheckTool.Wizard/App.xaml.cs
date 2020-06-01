@@ -17,8 +17,9 @@ namespace LoopCheckTool.Wizard
     {
         public App() : base()
         {
-            var service = new LoadingDialogService();
-            var viewModel = new AppViewModel(service);
+            LoadingDialogService loadingService = new LoadingDialogService();
+            AboutDialogService aboutService = new AboutDialogService();
+            AppViewModel viewModel = new AppViewModel(loadingService, aboutService);
             Resources.Add(nameof(AppViewModel), viewModel);
         }
     }

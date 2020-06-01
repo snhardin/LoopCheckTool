@@ -24,7 +24,8 @@ namespace LoopCheckTool.Wizard.ViewModels
         private AutoResetEvent _mutex;
         private BackgroundWorker _worker;
 
-        private ILoadingDialogService LoadingService;
+        private readonly IAboutDialogService AboutService;
+        private readonly ILoadingDialogService LoadingService;
 
         public WizardPageViewModel CurrentView
         {
@@ -42,9 +43,11 @@ namespace LoopCheckTool.Wizard.ViewModels
         public ICommand FinishStep { get; }
         public ICommand NextStep { get; }
         public ICommand PrevStep { get; }
+        public ICommand AboutCommand { get; }
 
-        public AppViewModel(ILoadingDialogService loadingService)
+        public AppViewModel(ILoadingDialogService loadingService, IAboutDialogService aboutService)
         {
+            AboutService = aboutService;
             LoadingService = loadingService;
 
             _currentView = new IntroPageViewModel();
@@ -59,6 +62,7 @@ namespace LoopCheckTool.Wizard.ViewModels
             _worker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
             _worker.ProgressChanged += BackgroundWorker_ProgressChanged;
 
+            AboutCommand = new CustomCommand(AboutCommand_CanExecute, AboutCommand_Execute);
             FinishStep = new CustomCommand(FinishStep_CanExecute, FinishStep_Execute);
             NextStep = new CustomCommand(NextStep_CanExecute, NextStep_Execute);
             PrevStep = new CustomCommand(PrevStep_CanExecute, PrevStep_Execute);
@@ -100,6 +104,16 @@ namespace LoopCheckTool.Wizard.ViewModels
             CurrentView.PrevButton_BeforeClicked();
             CurrentView = CurrentView.Prev;
             CurrentView.OnNavigateFromPrevButton();
+        }
+
+        private bool AboutCommand_CanExecute(object parameters)
+        {
+            return true;
+        }
+
+        private void AboutCommand_Execute(object parameters)
+        {
+            AboutService.OpenAboutDialog();
         }
 
         private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
