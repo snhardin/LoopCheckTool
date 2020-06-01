@@ -5,7 +5,7 @@
     <CustomAssemblyInfoFileName>CustomAssemblyInfo.cs</CustomAssemblyInfoFileName>
     <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
   </PropertyGroup>
-  <Target Name="CustomAssemblyInfo" AfterTargets="BeforeBuild">
+  <Target Name="CustomAssemblyInfo" BeforeTargets="CoreCompile">
     <Exec Command="git -C $(ProjectDir) describe --long --always --dirty &gt; $(HashFile)" />
     <ReadLinesFromFile File="$(HashFile)">
       <Output TaskParameter="Lines" ItemName="GitCommit" />
