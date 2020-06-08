@@ -47,7 +47,8 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         public override bool FinishButton_CanExecute()
         {
-            return true;
+            // Use the same logic as the 'Next' button.
+            return NextButton_CanExecute();
         }
 
         public override bool NextButton_CanExecute()
