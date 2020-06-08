@@ -17,7 +17,7 @@
 
   <Target Name="Build">
     <MakeDir Directories="$(OutputPath)" />
-    <Exec Command="hugo --source=$(SrcPath) --destination=..\$(OutputPath)" />
+    <Exec Command="hugo --source=$(SrcPath) --destination=..\$(OutputPath) -D" />
   </Target>
   <PropertyGroup>
     <RebuildDependsOn>
