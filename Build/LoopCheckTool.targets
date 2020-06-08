@@ -6,6 +6,9 @@
     <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
   </PropertyGroup>
   <Target Name="CustomAssemblyInfo" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <VersionFile>$(ProjectDir)VERSION</VersionFile>
+    </PropertyGroup>
     <Exec Command="git -C $(ProjectDir) describe --long --always --dirty &gt; $(HashFile)" />
     <ReadLinesFromFile File="$(HashFile)">
       <Output TaskParameter="Lines" ItemName="GitCommit" />
@@ -14,6 +17,10 @@
     <Exec Command="git -C $(ProjectDir) rev-parse --abbrev-ref HEAD &gt; $(BranchFile)" />
     <ReadLinesFromFile File="$(BranchFile)">
       <Output TaskParameter="Lines" ItemName="GitBranch" />
+    </ReadLinesFromFile>
+
+    <ReadLinesFromFile File="$(VersionFile)">
+      <Output TaskParameter="Lines" ItemName="UserDefinedVersion" />
     </ReadLinesFromFile>
 
     <ItemGroup>
@@ -25,10 +32,10 @@
       </AssemblyAttributes>
       <AssemblyAttributes Include="AssemblyVersion">
         <!-- Should be major version only per Microsoft guidelines. -->
-        <_Parameter1>0.0.0.0</_Parameter1>
+        <_Parameter1>@(UserDefinedVersion).0</_Parameter1>
       </AssemblyAttributes>
       <AssemblyAttributes Include="AssemblyFileVersion">
-        <_Parameter1>0.0.0.$(GITHUB_RUN_NUMBER)</_Parameter1>
+        <_Parameter1>@(UserDefinedVersion).$(GITHUB_RUN_NUMBER)</_Parameter1>
       </AssemblyAttributes>
       <AssemblyAttributes Include="AssemblyInformationalVersion">
         <!-- This should be the Git Tagged version. -->
