@@ -3,7 +3,7 @@
 	<Product Id="552C34A9-912E-414D-8585-12D259A90A45"
            Name="LoopCheckTool"
            Language="1033"
-           Version="0.0.0"
+           Version="0.0.1"
            Manufacturer="Scott Hardin"
            UpgradeCode="D28E0963-2E86-4D79-BA24-74DA0C24AD2A">
 		<Package Id="*"

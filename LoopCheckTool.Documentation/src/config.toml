@@ -16,7 +16,7 @@ enableMissingTranslationPlaceholders = false
     # Source Code repository section
     description = "Documentation & User Guide"
     github_repository = "https://github.com/snhardin/LoopCheckTool"
-    version = "0.0.0"
+    version = "0.0.1"
 
     # Documentation repository section
     # documentation repository (set edit link to documentation repository)
