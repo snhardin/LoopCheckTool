@@ -6,30 +6,41 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LoopCheckTool.Wizard.Services
 {
     public class AboutDialogService : IAboutDialogService
     {
+        private const string DEFAULT_VALUE = "unknown";
+
         public void OpenAboutDialog()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            //FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            AssemblyName assemblyName = AssemblyName.GetAssemblyName(assembly.Location);
-            var customAttributes = assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
-            var assemblyFileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-            var assemblyVersion = assemblyName.Version.ToString();
-            var gitBranch = customAttributes.Where(m => m.Key.Equals("GitBranch")).FirstOrDefault()?.Value ?? "";
-            var gitHash = customAttributes.Where(m => m.Key.Equals("GitCommit")).FirstOrDefault()?.Value ?? "";
-            var taggedVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
             AboutDialogViewModel vm = new AboutDialogViewModel()
             {
-                AssemblyFileVersion = assemblyFileVersion,
-                AssemblyVersion = assemblyVersion,
-                GitBranch = gitBranch,
-                GitHash = gitHash,
-                TaggedVersion = taggedVersion,
+                AssemblyFileVersion = DEFAULT_VALUE,
+                AssemblyVersion = DEFAULT_VALUE,
+                GitBranch = DEFAULT_VALUE,
+                GitHash = DEFAULT_VALUE,
+                TaggedVersion = DEFAULT_VALUE,
             };
+
+            try
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(assembly.Location);
+                IEnumerable<AssemblyMetadataAttribute> customAttributes = assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
+
+                vm.AssemblyFileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+                vm.AssemblyVersion = assemblyName.Version.ToString();
+                vm.GitBranch = customAttributes.Where(m => m.Key.Equals("GitBranch")).FirstOrDefault().Value;
+                vm.GitHash = customAttributes.Where(m => m.Key.Equals("GitCommit")).FirstOrDefault().Value;
+                vm.TaggedVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            }
+            catch
+            {
+                MessageBox.Show("An error occurred while retrieving assembly information.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             AboutWindow window = new AboutWindow
             {

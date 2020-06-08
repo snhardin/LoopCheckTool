@@ -133,12 +133,12 @@ namespace LoopCheckTool.Wizard.ViewModels
                         LoadingService.SetLoadingText($"Processing row {i}...");
                         if (!rows.TryGetValue(model.Header, out string templateName))
                         {
-                            throw new LibraryException($"No value exists for template key \"{model.Header}\".", i, rows);
+                            throw new LibraryException($"No value exists for template key \"{model.Header}\"", i, rows);
                         }
 
                         if (string.IsNullOrWhiteSpace(templateName))
                         {
-                            throw new LibraryException($"Cell for \"{model.Header}\" is blank.", i, rows);
+                            throw new LibraryException($"Cell for \"{model.Header}\" is blank", i, rows);
                         }
 
                         string templatePath = null;
@@ -148,15 +148,15 @@ namespace LoopCheckTool.Wizard.ViewModels
                         }
                         catch (ArgumentException ex)
                         {
-                            throw new LibraryException("Failed to combine specified TemplateDirectory and TemplateKey. The result was an invalid path.\n" +
-                                $"Key used: \"{model.Header}\".\n" +
-                                $"Value retrieved: \"{templateName}\".",
+                            throw new LibraryException("Failed to combine specified TemplateDirectory and TemplateKey. The result was an invalid path\n" +
+                                $"Key used: \"{model.Header}\"\n" +
+                                $"Value retrieved: \"{templateName}\"",
                                 ex, i, rows);
                         }
 
                         if (!File.Exists(templatePath))
                         {
-                            throw new LibraryException($"Could not find template using calculated path: {templatePath}.", i, rows);
+                            throw new LibraryException($"Could not find template using calculated path: {templatePath}", i, rows);
                         }
 
                         byte[] rawTemplate = File.ReadAllBytes(templatePath);
@@ -175,8 +175,7 @@ namespace LoopCheckTool.Wizard.ViewModels
                     }
                     catch (LibraryException ex)
                     {
-                        logger.WriteLine("A row was skipped while processing:");
-                        logger.WriteLine(ex.ToString());
+                        logger.WriteLine($"A row was skipped while processing: {ex.ToString()}");
 
                         if (!model.IgnoreErrors)
                         {

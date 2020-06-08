@@ -42,7 +42,7 @@ namespace LoopCheckTool.Lib.Document
             string[] explosion = instruction.Split(null);
             if (explosion.Length != 3)
             {
-                throw new WordWriterException("Unrecognized field instruction format.");
+                throw new WordWriterException("Unrecognized field instruction format");
             }
             else
             {
@@ -89,12 +89,12 @@ namespace LoopCheckTool.Lib.Document
                         string value = null;
                         if (!values.TryGetValue(oldKey, out value))
                         {
-                            throw new WordWriterException($"No key found for {oldKey}.");
+                            throw new WordWriterException($"No key found for {oldKey}");
                         }
 
                         if (string.IsNullOrWhiteSpace(value))
                         {
-                            Logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank.");
+                            Logger.Warn($"An entry exists for key {oldKey}, but the resulting value is blank");
                         }
 
                         AddCustomProperty(newPropName, value);
@@ -108,7 +108,7 @@ namespace LoopCheckTool.Lib.Document
 
                         if (!values.TryGetValue(oldKey, out string value))
                         {
-                            throw new WordWriterException($"No key found for {oldKey}.");
+                            throw new WordWriterException($"No key found for {oldKey}");
                         }
 
                         if (string.IsNullOrWhiteSpace(value))
