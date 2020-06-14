@@ -22,7 +22,7 @@ namespace LoopCheckTool.Lib.Document
             sources = new List<Source>();
         }
 
-        private (string, string, string) TransformFieldProperty(string instruction, int suffix)
+        private Tuple<string, string, string> TransformFieldProperty(string instruction, int suffix)
         {
             string[] explosion = instruction.Split('"');
             if (explosion.Length != 3)
@@ -33,11 +33,11 @@ namespace LoopCheckTool.Lib.Document
             {
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
-                return (string.Join("\"", explosion), oldKey, explosion[1]);
+                return Tuple.Create(string.Join("\"", explosion), oldKey, explosion[1]);
             }
         }
 
-        private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
+        private Tuple<string, string, string> TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
         {
             string[] explosion = instruction.Split(null);
             if (explosion.Length != 3)
@@ -48,7 +48,7 @@ namespace LoopCheckTool.Lib.Document
             {
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
-                return (string.Join(" ", explosion), oldKey, explosion[1]);
+                return Tuple.Create(string.Join(" ", explosion), oldKey, explosion[1]);
             }
         }
 

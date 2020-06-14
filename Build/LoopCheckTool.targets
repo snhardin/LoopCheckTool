@@ -1,14 +1,26 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <BranchFile>$(IntermediateOutputPath)GitBranch</BranchFile>
     <GITHUB_RUN_NUMBER Condition=" '$(GITHUB_RUN_NUMBER)' == '' ">0</GITHUB_RUN_NUMBER>
-    <CustomAssemblyInfoFileName>CustomAssemblyInfo.cs</CustomAssemblyInfoFileName>
-    <HashFile>$(IntermediateOutputPath)GitHash</HashFile>
-    <TagFile>$(IntermediateOutputPath)GitTag</TagFile>
+    <UserDefinedVersion Condition=" '$(UserDefinedVersion)' == '' ">0.0.1</UserDefinedVersion>
   </PropertyGroup>
-  <Target Name="CustomAssemblyInfo" BeforeTargets="CoreCompile">
+  <PropertyGroup>
+    <!-- Should be major version only per Microsoft guidelines. -->
+    <AssemblyVersion>$(UserDefinedVersion).0</AssemblyVersion>
+    <AssemblyTitle>$(AssemblyName)</AssemblyTitle>
+    <Company>Scott "Dgigs" Hardin</Company>
+    <Copyright>Copyright ©  2020</Copyright>
+    <FileVersion>$(UserDefinedVersion).$(GITHUB_RUN_NUMBER)</FileVersion>
+    <Product>$(AssemblyName)</Product>
+    <RepositoryUrl>https://github.com/snhardin/LoopCheckTool</RepositoryUrl>
+    <!-- AssemblyInformationalVersion> is set below. -->
+  </PropertyGroup>
+  <Target Name="CustomAssemblyMetadata" BeforeTargets="BeforeCompile;CoreCompile" DependsOnTargets="CreateGeneratedAssemblyInfoInputsCacheFile">
     <PropertyGroup>
-      <VersionFile>$(ProjectDir)VERSION</VersionFile>
+      <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' ">$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+      <BranchFile>$(IntermediateOutputPath)$(MSBuildProjectName).GitBranch</BranchFile>
+      <CustomAssemblyInfoFileName>$(MSBuildProjectName).CustomAssemblyMetadata.cs</CustomAssemblyInfoFileName>
+      <HashFile>$(IntermediateOutputPath)$(MSBuildProjectName).GitHash</HashFile>
+      <TagFile>$(IntermediateOutputPath)$(MSBuildProjectName).GitTag</TagFile>
     </PropertyGroup>
     <Exec Command="git -C $(ProjectDir) rev-parse --short HEAD &gt; $(HashFile)" />
     <ReadLinesFromFile File="$(HashFile)">
@@ -25,35 +37,10 @@
     </Exec>
     <!-- If command is successful, read output from file. -->
     <ReadLinesFromFile File="$(TagFile)" Condition="$(GitTagExitCode) == 0">
-      <Output TaskParameter="Lines" ItemName="GitTag" />
+      <Output TaskParameter="Lines" PropertyName="AssemblyInformationalVersion" />
     </ReadLinesFromFile>
-    <!-- If command is not successful, default to 0.0.0. -->
-    <ItemGroup Condition="$(GitTagExitCode) != 0">
-      <GitTag Include="0.0.1"></GitTag>
-    </ItemGroup>
-
-    <ReadLinesFromFile File="$(VersionFile)">
-      <Output TaskParameter="Lines" ItemName="UserDefinedVersion" />
-    </ReadLinesFromFile>
-
+  
     <ItemGroup>
-      <AssemblyAttributes Include="AssemblyTitle">
-        <_Parameter1>$(AssemblyName)</_Parameter1>
-      </AssemblyAttributes>
-      <AssemblyAttributes Include="AssemblyProduct">
-        <_Parameter1>$(AssemblyName)</_Parameter1>
-      </AssemblyAttributes>
-      <AssemblyAttributes Include="AssemblyVersion">
-        <!-- Should be major version only per Microsoft guidelines. -->
-        <_Parameter1>@(UserDefinedVersion).0</_Parameter1>
-      </AssemblyAttributes>
-      <AssemblyAttributes Include="AssemblyFileVersion">
-        <_Parameter1>@(UserDefinedVersion).$(GITHUB_RUN_NUMBER)</_Parameter1>
-      </AssemblyAttributes>
-      <AssemblyAttributes Include="AssemblyInformationalVersion">
-        <!-- This should be the Git Tagged version. -->
-        <_Parameter1>@(GitTag).0</_Parameter1>
-      </AssemblyAttributes>
       <AssemblyAttributes Include="AssemblyMetadata">
         <_Parameter1>GitCommit</_Parameter1>
         <_Parameter2>@(GitCommit)</_Parameter2>
@@ -75,7 +62,6 @@
       <FileWrites Include="$(TagFile)" />
       <FileWrites Include="$(BranchFile)" />
       <FileWrites Include="$(HashFile)" />
-      <FileWrites Include="$(IntermediateOutputPath)$(CustomAssemblyInfoFileName)" />
     </ItemGroup>
   </Target>
 </Project>
