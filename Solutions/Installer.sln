@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Lib", "..\LoopCheckTool.Lib\LoopCheckTool.Lib.csproj", "{653DAAA7-5002-42DA-9447-74210A366726}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Desktop", "..\LoopCheckTool.Desktop\LoopCheckTool.Desktop.csproj", "{53F1544B-0753-4EDD-B0E7-754A85C51B4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoopCheckTool.Lib", "..\LoopCheckTool.Lib\LoopCheckTool.Lib.csproj", "{653DAAA7-5002-42DA-9447-74210A366726}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Console", "..\LoopCheckTool.Console\LoopCheckTool.Console.csproj", "{8972A545-E591-495B-B90A-06E220A31580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoopCheckTool.Wizard", "..\LoopCheckTool.Wizard\LoopCheckTool.Wizard.csproj", "{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoopCheckTool.Wizard", "..\LoopCheckTool.Wizard\LoopCheckTool.Wizard.csproj", "{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "LoopCheckTool.Installer", "..\LoopCheckTool.Installer\LoopCheckTool.Installer.wixproj", "{C288DDEF-1215-4060-9938-473442EF6DC3}"
 EndProject
@@ -25,20 +23,12 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|x86.ActiveCfg = Debug|x86
-		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|x86.Build.0 = Debug|x86
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Debug|x86.Build.0 = Debug|Any CPU
 		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{653DAAA7-5002-42DA-9447-74210A366726}.Release|Any CPU.Build.0 = Release|Any CPU
-		{653DAAA7-5002-42DA-9447-74210A366726}.Release|x86.ActiveCfg = Release|x86
-		{653DAAA7-5002-42DA-9447-74210A366726}.Release|x86.Build.0 = Release|x86
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Debug|x86.ActiveCfg = Debug|x86
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Debug|x86.Build.0 = Debug|x86
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Release|x86.ActiveCfg = Release|x86
-		{53F1544B-0753-4EDD-B0E7-754A85C51B4C}.Release|x86.Build.0 = Release|x86
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|x86.ActiveCfg = Release|Any CPU
+		{653DAAA7-5002-42DA-9447-74210A366726}.Release|x86.Build.0 = Release|Any CPU
 		{8972A545-E591-495B-B90A-06E220A31580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8972A545-E591-495B-B90A-06E220A31580}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8972A545-E591-495B-B90A-06E220A31580}.Debug|x86.ActiveCfg = Debug|x86
@@ -49,12 +39,12 @@ Global
 		{8972A545-E591-495B-B90A-06E220A31580}.Release|x86.Build.0 = Release|x86
 		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|x86.ActiveCfg = Debug|x86
-		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|x86.Build.0 = Debug|x86
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Debug|x86.Build.0 = Debug|Any CPU
 		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|x86.ActiveCfg = Release|x86
-		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|x86.Build.0 = Release|x86
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{BB3317DE-4ED2-47D0-B8A7-80CA074787AD}.Release|x86.Build.0 = Release|Any CPU
 		{C288DDEF-1215-4060-9938-473442EF6DC3}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{C288DDEF-1215-4060-9938-473442EF6DC3}.Debug|x86.ActiveCfg = Debug|x86
 		{C288DDEF-1215-4060-9938-473442EF6DC3}.Debug|x86.Build.0 = Debug|x86

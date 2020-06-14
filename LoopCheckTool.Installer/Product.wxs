@@ -49,11 +49,6 @@
             <File Id="WizardEXEConfig" Name="LoopCheckTool.Wizard.exe.config" Source="$(var.LoopCheckTool.Wizard.TargetDir)LoopCheckTool.Wizard.exe.config" />
             <File Id="WizardPDB" Name="LoopCheckTool.Wizard.pdb" Source="$(var.LoopCheckTool.Wizard.TargetDir)LoopCheckTool.Wizard.pdb" />
           </Component>
-          <Component Id="LoopCheckToolDesktop" Guid="5AF68549-685C-412F-97C5-DE207714A6DF">
-            <File Id="DesktopEXE" Name="LoopCheckTool.Desktop.exe" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.exe" KeyPath="yes" Checksum="yes" />
-            <File Id="DesktopEXEConfig" Name="LoopCheckTool.Desktop.exe.config" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.exe.config" />
-            <File Id="DesktopPDB" Name="LoopCheckTool.Desktop.pdb" Source="$(var.LoopCheckTool.Desktop.TargetDir)LoopCheckTool.Desktop.pdb" />
-          </Component>
           <Component Id="LoopCheckToolConsole" Guid="24594817-A291-4491-97FF-5CF10254B221">
             <File Id="CommandLineDLL" Name="CommandLine.dll" Source="$(var.LoopCheckTool.Console.TargetDir)CommandLine.dll" />
             <File Id="CommandLineXML" Name="CommandLine.xml" Source="$(var.LoopCheckTool.Console.TargetDir)CommandLine.xml" />
@@ -68,12 +63,6 @@
 
     <Feature Id="Complete" Title="LoopCheckTool" Description="The complete LoopCheckTool package." Display="expand"
              Level="1" ConfigurableDirectory="INSTALLDIR">
-      <Feature Id="DesktopApplication" Title="Test Desktop Application" Level="1000"
-               Description="The first interation desktop application initially built for testing.">
-        <ComponentRef Id="FrontendPreReqs" />
-        <ComponentRef Id="LoopCheckToolLibrary" />
-        <ComponentRef Id="LoopCheckToolDesktop" />
-      </Feature>
       <Feature Id="WizardApplication" Title="Wizard Application" Level="1"
                Description="The new step-by-step Wizard desktop application that walks through document generation step-by-step.">
         <ComponentRef Id="FrontendPreReqs" />

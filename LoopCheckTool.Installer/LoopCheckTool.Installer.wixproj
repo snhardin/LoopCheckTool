@@ -35,14 +35,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\LoopCheckTool.Desktop\LoopCheckTool.Desktop.csproj">
-      <Name>LoopCheckTool.Desktop</Name>
-      <Project>{53f1544b-0753-4edd-b0e7-754a85c51b4c}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\LoopCheckTool.Documentation\LoopCheckTool.Documentation.csproj">
       <Name>LoopCheckTool.Documentation</Name>
       <Project>{b7d8ea44-dddb-4489-9352-2281b1ad5530}</Project>
@@ -118,7 +110,6 @@
                    SuppressRegistry="true"
                    SuppressRootDirectory="true" />-->
     <PropertyGroup>
-      
     </PropertyGroup>
   </Target>
 </Project>
