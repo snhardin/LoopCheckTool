@@ -8,8 +8,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>LoopCheckTool.Installer</OutputName>
     <OutputType>Package</OutputType>
-    <GeneratedDocsFolder>..\LoopCheckTool.Documentation\bin</GeneratedDocsFolder>
-    <DefineConstants>HarvestPath=$(GeneratedDocsFolder)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -21,44 +19,24 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
+    <ConsoleProjectBasePath>..\LoopCheckTool.Console\</ConsoleProjectBasePath>
+    <DocumentationProjectBasePath>..\LoopCheckTool.Documentation\</DocumentationProjectBasePath>
+    <LibraryProjectBasePath>..\LoopCheckTool.Lib\</LibraryProjectBasePath>
+    <WizardProjectBasePath>..\LoopCheckTool.Wizard\</WizardProjectBasePath>
+    <FrameworkTarget>netcoreapp3.1</FrameworkTarget>
+    <RuntimeTarget>win-x64</RuntimeTarget>
+    <!-- Be careful with trailing '\' here... -->
+    <ConsolePublishPath>$(ConsoleProjectBasePath)bin\$(Configuration)\$(FrameworkTarget)\$(RuntimeTarget)\publish\</ConsolePublishPath>
+    <DocumentationPublishPath>$(DocumentationProjectBasePath)bin</DocumentationPublishPath>
+    <LibraryPublishPath>$(LibraryProjectBasePath)bin\$(Configuration)\$(FrameworkTarget)\$(RuntimeTarget)\publish\</LibraryPublishPath>
+    <WizardPublishPath>$(WizardProjectBasePath)bin\$(Configuration)\$(FrameworkTarget)\$(RuntimeTarget)\publish\</WizardPublishPath>
+    <DefineConstants>HarvestPath=$(DocumentationPublishPath);ConsolePublishPath=$(ConsolePublishPath);LibraryPublishPath=$(LibraryPublishPath);WizardPublishPath=$(WizardPublishPath)</DefineConstants> <!-- Used by Wix -->
+  </PropertyGroup>
+  <PropertyGroup>
     <TagFile>$(IntermediateOutputPath)GitTag</TagFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LoopCheckTool.Console\LoopCheckTool.Console.csproj">
-      <Name>LoopCheckTool.Console</Name>
-      <Project>{8972a545-e591-495b-b90a-06e220a31580}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\LoopCheckTool.Documentation\LoopCheckTool.Documentation.csproj">
-      <Name>LoopCheckTool.Documentation</Name>
-      <Project>{b7d8ea44-dddb-4489-9352-2281b1ad5530}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\LoopCheckTool.Lib\LoopCheckTool.Lib.csproj">
-      <Name>LoopCheckTool.Lib</Name>
-      <Project>{653daaa7-5002-42da-9447-74210a366726}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
-    <ProjectReference Include="..\LoopCheckTool.Wizard\LoopCheckTool.Wizard.csproj">
-      <Name>LoopCheckTool.Wizard</Name>
-      <Project>{bb3317de-4ed2-47d0-b8a7-80ca074787ad}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
@@ -86,8 +64,16 @@
 	</Target>
 	-->
   <Target Name="BeforeBuild">
+    <Exec Command="dotnet clean $(ConsoleProjectBasePath)LoopCheckTool.Console.csproj" />
+    <Exec Command="dotnet clean $(DocumentationProjectBasePath)LoopCheckTool.Documentation.csproj" />
+    <Exec Command="dotnet clean $(LibraryProjectBasePath)LoopCheckTool.Lib.csproj" />
+    <Exec Command="dotnet clean $(WizardProjectBasePath)LoopCheckTool.Wizard.csproj" />
+    <Exec Command="dotnet publish $(ConsoleProjectBasePath)LoopCheckTool.Console.csproj -c $(Configuration) -f $(FrameworkTarget) -r $(RuntimeTarget) --self-contained false" />
+    <Exec Command="dotnet build $(DocumentationProjectBasePath)LoopCheckTool.Documentation.csproj" />
+    <Exec Command="dotnet publish $(LibraryProjectBasePath)LoopCheckTool.Lib.csproj -c $(Configuration) -f $(FrameworkTarget) -r $(RuntimeTarget) --self-contained false" />
+    <Exec Command="dotnet publish $(WizardProjectBasePath)LoopCheckTool.Wizard.csproj -c $(Configuration) -f $(FrameworkTarget) -r $(RuntimeTarget) --self-contained false" />
     <ItemGroup>
-      <HarvestDirectory Include="$(GeneratedDocsFolder)">
+      <HarvestDirectory Include="$(DocumentationPublishPath)">
         <PreprocessorVariable>var.HarvestPath</PreprocessorVariable>
         <ComponentGroupName>LoopCheckToolDocumentation</ComponentGroupName>
         <DirectoryRefId>DOCSDIR</DirectoryRefId>
