@@ -15,7 +15,7 @@
              InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of LoopCheckTool is already installed." />
-		<MediaTemplate />
+		<MediaTemplate EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
