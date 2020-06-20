@@ -36,7 +36,6 @@
           <Component Id="LoopCheckToolWizard" Guid="9E43C1F3-F3CB-4A42-93A3-23EB3DDC607D">
             <File Id="WinAPICodePackDLL" Name="Microsoft.WindowsAPICodePack.dll" Source="$(var.WizardPublishPath)Microsoft.WindowsAPICodePack.dll" />
             <File Id="WinAPICodePackShellDLL" Name="Microsoft.WindowsAPICodePack.Shell.dll" Source="$(var.WizardPublishPath)Microsoft.WindowsAPICodePack.Shell.dll" />
-            <File Id="WinAPICodePackShellExtensionsDLL" Name="Microsoft.WindowsAPICodePack.ShellExtensions.dll" Source="$(var.WizardPublishPath)Microsoft.WindowsAPICodePack.ShellExtensions.dll" />
             <File Id="WizardDeps" Name="LoopCheckTool.Wizard.deps.json" Source="$(var.WizardPublishPath)LoopCheckTool.Wizard.deps.json"  />
             <File Id="WizardDLL" Name="LoopCheckTool.Wizard.dll" Source="$(var.WizardPublishPath)LoopCheckTool.Wizard.dll" />
             <File Id="WizardDLLConfig" Name="LoopCheckTool.Wizard.dll.config" Source="$(var.WizardPublishPath)LoopCheckTool.Wizard.dll.config" />
