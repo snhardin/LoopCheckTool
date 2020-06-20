@@ -13,7 +13,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
     public class ExcelReader : IDisposable
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private SpreadsheetDocument document;
+        private readonly SpreadsheetDocument document;
 
         public ExcelReader(string fileName)
         {
@@ -238,14 +238,27 @@ namespace LoopCheckTool.Lib.Spreadsheet
             {
                 SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
 
+                string cellText = c.CellValue?.Text;
                 if (c.DataType != null && c.DataType == CellValues.SharedString)
+                    return sharedStrings.ElementAt(int.Parse(cellText)).InnerText;
+
+                // Check if the text is a number.
+                if (!string.IsNullOrEmpty(cellText) && double.TryParse(cellText, out double convDbl))
                 {
-                    return sharedStrings.ElementAt(int.Parse(c.CellValue.Text)).InnerText;
+                    System.Globalization.NumberStyles styles = System.Globalization.NumberStyles.Float;
+                    System.Globalization.CultureInfo cultureInfo = System.Globalization.CultureInfo.InvariantCulture;
+
+                    // Try to parse as a long and a decimal.
+                    if (long.TryParse(cellText, styles, cultureInfo, out long convLong))
+                        return convLong.ToString();
+                    if (decimal.TryParse(cellText, styles, cultureInfo, out decimal convDec))
+                        return convDec.ToString();
+
+                    // If all else fails, return a formatted double.
+                    return convDbl.ToString("N").Replace(",", "");
                 }
-                else
-                {
-                    return c.CellValue?.Text;
-                }
+
+                return cellText;
             }
 
             public IDictionary<string, string> ReadNextRow()

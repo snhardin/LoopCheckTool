@@ -51,6 +51,11 @@ namespace LoopCheckTool.Wizard.ViewModels
             return NextButton_CanExecute();
         }
 
+        public override void FinishButton_BeforeClicked()
+        {
+            NextButton_BeforeClicked();
+        }
+
         public override bool NextButton_CanExecute()
         {
             return OutputFileSpecified;
