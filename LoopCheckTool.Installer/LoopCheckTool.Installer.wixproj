@@ -30,12 +30,14 @@
     <DocumentationPublishPath>$(DocumentationProjectBasePath)bin</DocumentationPublishPath>
     <LibraryPublishPath>$(LibraryProjectBasePath)bin\$(Configuration)\$(FrameworkTarget)\$(RuntimeTarget)\publish\</LibraryPublishPath>
     <WizardPublishPath>$(WizardProjectBasePath)bin\$(Configuration)\$(FrameworkTarget)\$(RuntimeTarget)\publish\</WizardPublishPath>
-    <DefineConstants>HarvestPath=$(DocumentationPublishPath);ConsolePublishPath=$(ConsolePublishPath);LibraryPublishPath=$(LibraryPublishPath);WizardPublishPath=$(WizardPublishPath)</DefineConstants> <!-- Used by Wix -->
+    <DefineConstants>HarvestPath=$(DocumentationPublishPath);ConsolePublishPath=$(ConsolePublishPath);LibraryPublishPath=$(LibraryPublishPath);WizardPublishPath=$(WizardPublishPath)</DefineConstants>
+    <!-- Used by Wix -->
   </PropertyGroup>
   <PropertyGroup>
     <TagFile>$(IntermediateOutputPath)GitTag</TagFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CheckDotnetCoreVersion.wxs" />
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +51,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\license.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LoopCheckTool.Installer.CheckDotNetCoreVersion\LoopCheckTool.Installer.CheckDotNetCoreVersion.csproj">
+      <Name>LoopCheckTool.Installer.CheckDotNetCoreVersion</Name>
+      <Project>{3f9aa3e0-2f1a-42c1-8e96-c0314722be21}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
@@ -64,10 +76,6 @@
 	</Target>
 	-->
   <Target Name="BeforeBuild">
-    <Exec Command="dotnet clean $(ConsoleProjectBasePath)LoopCheckTool.Console.csproj" />
-    <Exec Command="dotnet clean $(DocumentationProjectBasePath)LoopCheckTool.Documentation.csproj" />
-    <Exec Command="dotnet clean $(LibraryProjectBasePath)LoopCheckTool.Lib.csproj" />
-    <Exec Command="dotnet clean $(WizardProjectBasePath)LoopCheckTool.Wizard.csproj" />
     <Exec Command="dotnet publish $(ConsoleProjectBasePath)LoopCheckTool.Console.csproj -c $(Configuration) -f $(FrameworkTarget) -r $(RuntimeTarget) --self-contained false" />
     <Exec Command="dotnet build $(DocumentationProjectBasePath)LoopCheckTool.Documentation.csproj" />
     <Exec Command="dotnet publish $(LibraryProjectBasePath)LoopCheckTool.Lib.csproj -c $(Configuration) -f $(FrameworkTarget) -r $(RuntimeTarget) --self-contained false" />
@@ -97,5 +105,11 @@
                    SuppressRootDirectory="true" />-->
     <PropertyGroup>
     </PropertyGroup>
+  </Target>
+  <Target Name="BeforeClean">
+    <Exec Command="dotnet clean $(ConsoleProjectBasePath)LoopCheckTool.Console.csproj" />
+    <Exec Command="dotnet clean $(DocumentationProjectBasePath)LoopCheckTool.Documentation.csproj" />
+    <Exec Command="dotnet clean $(LibraryProjectBasePath)LoopCheckTool.Lib.csproj" />
+    <Exec Command="dotnet clean $(WizardProjectBasePath)LoopCheckTool.Wizard.csproj" />
   </Target>
 </Project>

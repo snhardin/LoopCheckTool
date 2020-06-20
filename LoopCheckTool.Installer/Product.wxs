@@ -74,6 +74,10 @@
       </Feature>
     </Feature>
 
+    <InstallExecuteSequence>
+      <Custom Action="CheckDotNetCoreVersionAction" Before="InstallFiles" />
+    </InstallExecuteSequence>
+
     <WixVariable Id="WixUILicenseRtf" Value="Resources/license.rtf" />
     <UIRef Id="WixUI_Mondo" />
     <UIRef Id="WixUI_ErrorProgressText" />
