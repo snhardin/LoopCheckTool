@@ -121,12 +121,12 @@ namespace LoopCheckTool.Wizard.ViewModels
             DocumentGenerationModel model = (DocumentGenerationModel)e.Argument;
 
             using (StreamWriter logger = File.CreateText(model.OutputPath + ".log"))
-            using (ExcelReader.RowReaderContext rowReader = model.Reader.CreateRowReader(model.Sheet))
+            using (ExcelReader.RowReader rowReader = model.Reader.CreateRowReader(model.Sheet))
             {
                 uint errors = 0;
                 WordWriter writer = new WordWriter();
                 IDictionary<string, string> rows = null;
-                for (int i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
+                for (ulong i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
                 {
                     try
                     {
@@ -165,9 +165,9 @@ namespace LoopCheckTool.Wizard.ViewModels
                             templateStream.Write(rawTemplate, 0, rawTemplate.Length);
                             try
                             {
-                                writer.FillTemplate_Safe(templateStream, rows, i);
+                                writer.GenerateAndAppendTemplate(templateStream, rows, i);
                             }
-                            catch (WordWriter.WordWriterException ex)
+                            catch (DocumentWriterException ex)
                             {
                                 throw new LibraryException("Parse error", ex, i, rows);
                             }

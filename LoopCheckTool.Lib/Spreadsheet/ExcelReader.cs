@@ -10,11 +10,25 @@ using System.Threading.Tasks;
 
 namespace LoopCheckTool.Lib.Spreadsheet
 {
+    /// <summary>
+    /// Concrete implementation for reading an IO List in Excel
+    /// </summary>
     public class ExcelReader : IDisposable
     {
+        /// <summary>
+        /// Logger used for debugging and bug reporting
+        /// </summary>
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// The open Excel document
+        /// </summary>
         private readonly SpreadsheetDocument document;
 
+        /// <summary>
+        /// Basic constructor to open Excel IO List
+        /// </summary>
+        /// <param name="fileName">The path of the file to open</param>
         public ExcelReader(string fileName)
         {
             try
@@ -28,6 +42,9 @@ namespace LoopCheckTool.Lib.Spreadsheet
             }
         }
 
+        /// <summary>
+        /// Disposes of open Excel IO List file handler
+        /// </summary>
         public void Dispose()
         {
             try
@@ -41,6 +58,10 @@ namespace LoopCheckTool.Lib.Spreadsheet
             }
         }
 
+        /// <summary>
+        /// Gets all worksheets in the Excel file
+        /// </summary>
+        /// <returns>Enumerable of Worksheets</returns>
         public IEnumerable<Worksheet> GetWorksheets()
         {
             try
@@ -54,6 +75,11 @@ namespace LoopCheckTool.Lib.Spreadsheet
             }
         }
 
+        /// <summary>
+        /// Gets the header (first row) of the specified sheet
+        /// </summary>
+        /// <param name="worksheet">The sheet to use</param>
+        /// <returns>A list of cell values for the first row of the sheet</returns>
         public IList<string> GetHeader(Worksheet worksheet)
         {
             try
@@ -97,7 +123,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
                     }
                 }
 
-                throw new ExcelReaderException("No header found for worksheet.");
+                throw new SpreadsheetReaderException("No header found for worksheet.");
             }
             catch (Exception ex)
             {
@@ -106,30 +132,69 @@ namespace LoopCheckTool.Lib.Spreadsheet
             }
         }
 
-        public RowReaderContext CreateRowReader(Worksheet worksheet)
+        /// <summary>
+        /// Creates a row reader for reading values from the Excel sheet
+        /// </summary>
+        /// <param name="worksheet">The worksheet to read values from</param>
+        /// <returns>A row reader</returns>
+        public RowReader CreateRowReader(Worksheet worksheet)
         {
-            return new RowReaderContext(document, worksheet);
+            return new RowReader(document, worksheet);
         }
 
+        /// <summary>
+        /// Public concrete plain representation of a worksheet in Excel
+        /// </summary>
         public class Worksheet
         {
+            /// <summary>
+            /// Constructor for plain worksheet
+            /// </summary>
+            /// <param name="id">ID of the worksheet</param>
+            /// <param name="name">Name of the worksheet.</param>
             public Worksheet(string id, string name)
             {
                 ID = id;
                 Name = name;
             }
 
+            /// <summary>
+            /// ID of the worksheet
+            /// </summary>
             public string ID { get; }
+
+            /// <summary>
+            /// Name of the worksheet
+            /// </summary>
             public string Name { get; }
         }
 
-        public class RowReaderContext : IDisposable
+        /// <summary>
+        /// Class that keeps context surrounding reading the IO List row-by-row
+        /// </summary>
+        public class RowReader : IDisposable
         {
-            private SpreadsheetDocument document;
-            private IDictionary<string, string> headers;
-            private OpenXmlReader reader;
+            /// <summary>
+            /// The open Excel IO List document
+            /// </summary>
+            private readonly SpreadsheetDocument document;
 
-            public RowReaderContext(SpreadsheetDocument document, Worksheet worksheet)
+            /// <summary>
+            /// The headers to reference from the top of the document
+            /// </summary>
+            private readonly IDictionary<string, string> headers;
+
+            /// <summary>
+            /// Instance of the reader of the Excel document
+            /// </summary>
+            private readonly OpenXmlReader reader;
+
+            /// <summary>
+            /// Instantiates a new RowReader
+            /// </summary>
+            /// <param name="document">The spreadsheet document to read from</param>
+            /// <param name="worksheet">The worksheet within the spreadsheet to read from</param>
+            internal RowReader(SpreadsheetDocument document, Worksheet worksheet)
             {
                 try
                 {
@@ -145,6 +210,11 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
             }
 
+            /// <summary>
+            /// Reads the next row in the spreadsheet and performs some action on said row
+            /// </summary>
+            /// <param name="func">The action to perform on the row of Cells</param>
+            /// <returns>True if a row was found, false if not</returns>
             private bool ReadNextRow(Action<Cell> func)
             {
                 // Read until a Row object is found.
@@ -175,10 +245,15 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 return false;
             }
 
+            /// <summary>
+            /// Loads headers from the Excel spreadsheet, getting a mapping of columns to headers
+            /// </summary>
+            /// <returns>Dictionary with column as the key and header names as the values</returns>
             private IDictionary<string, string> LoadHeaders()
             {
                 // TODO: Check for duplicates.
                 Dictionary<string, string> headers = new Dictionary<string, string>();
+
                 void func(Cell cell)
                 {
                     string key = GetCellColumn(cell);
@@ -192,10 +267,15 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
                 else
                 {
-                    throw new ExcelReaderException("Could not find headers for the Excel spreadsheet.");
+                    throw new SpreadsheetReaderException("Could not find headers for the Excel spreadsheet.");
                 }
             }
 
+            /// <summary>
+            /// Gets the column of a cell in the form of a letter
+            /// </summary>
+            /// <param name="c">The cell to get the column of</param>
+            /// <returns>The cell column in the form of a letter</returns>
             private string GetCellColumn(Cell c)
             {
                 // Taken from MSDN
@@ -205,12 +285,17 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
                 if (string.IsNullOrEmpty(match.Value))
                 {
-                    throw new ExcelReaderException($"Could not decipher the column name from the following reference: \"{c.CellReference.Value}\".");
+                    throw new SpreadsheetReaderException($"Could not decipher the column name from the following reference: \"{c.CellReference.Value}\".");
                 }
 
                 return match.Value;
             }
 
+            /// <summary>
+            /// Gets the row of a cell in the form of a number
+            /// </summary>
+            /// <param name="c">The cell to get the row of</param>
+            /// <returns>The cell row in the form of a number</returns>
             private uint GetCellRow(Cell c)
             {
                 // Taken from MSDN
@@ -220,7 +305,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
 
                 if (string.IsNullOrEmpty(match.Value))
                 {
-                    throw new ExcelReaderException($"Could not decipher the column name from the following cell: \"{c.CellReference.Value}\".");
+                    throw new SpreadsheetReaderException($"Could not decipher the column name from the following cell: \"{c.CellReference.Value}\".");
                 }
 
                 if (uint.TryParse(match.Value, out uint result))
@@ -229,11 +314,16 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
                 else
                 {
-                    throw new ExcelReaderException($"Could not parse integer from the following cell: \"{c.CellReference.Value}\"\n" +
+                    throw new SpreadsheetReaderException($"Could not parse integer from the following cell: \"{c.CellReference.Value}\"\n" +
                         $"Matched regex: {match.Value}.");
                 }
             }
 
+            /// <summary>
+            /// Gets the value of a cell, automatically referencing shared strings and formatting numbers
+            /// </summary>
+            /// <param name="c">The cell to get the value of</param>
+            /// <returns>The value of the cell formatted</returns>
             private string GetCellValue(Cell c)
             {
                 SharedStringTable sharedStrings = document.WorkbookPart.SharedStringTablePart.SharedStringTable;
@@ -261,6 +351,11 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 return cellText;
             }
 
+            /// <summary>
+            /// Reads the next row of the Excel spreadsheet
+            /// </summary>
+            /// <returns>A dictionary with the column header as the key and the corresponding
+            ///          row values as the value</returns>
             public IDictionary<string, string> ReadNextRow()
             {
                 try
@@ -307,17 +402,13 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 }
             }
 
+            /// <summary>
+            /// Disposes of open resources
+            /// </summary>
             public void Dispose()
             {
                 reader.Close();
             }
-        }
-
-        public class ExcelReaderException : Exception
-        {
-            public ExcelReaderException() { }
-            public ExcelReaderException(string message) : base(message) { }
-            public ExcelReaderException(string message, Exception inner) : base(message, inner) { }
         }
     }
 }

@@ -211,7 +211,7 @@ namespace LoopCheckTool.Wizard.ViewModels
                 {
                     Headers = Reader.GetHeader(SelectedSheet);
                 }
-                catch (ExcelReader.ExcelReaderException)
+                catch (SpreadsheetReaderException)
                 {
                     Headers = null;
                     MessageBox.Show("No headers were found in the selected worksheet.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

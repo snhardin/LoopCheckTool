@@ -13,8 +13,8 @@ namespace LoopCheckTool.Lib.Document
     public class WordWriter
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private List<CustomDocumentProperty> customProperties;
-        private List<Source> sources;
+        private readonly List<CustomDocumentProperty> customProperties;
+        private readonly List<Source> sources;
 
         public WordWriter()
         {
@@ -22,7 +22,7 @@ namespace LoopCheckTool.Lib.Document
             sources = new List<Source>();
         }
 
-        private Tuple<string, string, string> TransformFieldProperty(string instruction, int suffix)
+        private (string, string, string) TransformFieldProperty(string instruction, ulong suffix)
         {
             string[] explosion = instruction.Split('"');
             if (explosion.Length != 3)
@@ -33,28 +33,28 @@ namespace LoopCheckTool.Lib.Document
             {
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
-                return Tuple.Create(string.Join("\"", explosion), oldKey, explosion[1]);
+                return (string.Join("\"", explosion), oldKey, explosion[1]);
             }
         }
 
-        private Tuple<string, string, string> TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
+        private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, ulong suffix)
         {
             string[] explosion = instruction.Split(null);
             if (explosion.Length != 3)
             {
-                throw new WordWriterException("Unrecognized field instruction format");
+                throw new DocumentWriterException("Unrecognized field instruction format");
             }
             else
             {
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
-                return Tuple.Create(string.Join(" ", explosion), oldKey, explosion[1]);
+                return (string.Join(" ", explosion), oldKey, explosion[1]);
             }
         }
 
         private void AddCustomProperty(string name, string value)
         {
-            var customPropertyResults = customProperties.Where(c => c.Name.Value.Equals(name));
+            IEnumerable<CustomDocumentProperty> customPropertyResults = customProperties.Where(c => c.Name.Value.Equals(name));
             CustomDocumentProperty customProperty = customPropertyResults.FirstOrDefault();
             if (customProperty == default(CustomDocumentProperty))
             {
@@ -71,7 +71,7 @@ namespace LoopCheckTool.Lib.Document
             }
         }
 
-        public void FillTemplate_Safe(MemoryStream template, IDictionary<string, string> values, int idx)
+        public void GenerateAndAppendTemplate(MemoryStream template, IDictionary<string, string> values, ulong idx)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace LoopCheckTool.Lib.Document
                         string value = null;
                         if (!values.TryGetValue(oldKey, out value))
                         {
-                            throw new WordWriterException($"No key found for {oldKey}");
+                            throw new DocumentWriterException($"No key found for {oldKey}");
                         }
 
                         if (string.IsNullOrWhiteSpace(value))
@@ -108,7 +108,7 @@ namespace LoopCheckTool.Lib.Document
 
                         if (!values.TryGetValue(oldKey, out string value))
                         {
-                            throw new WordWriterException($"No key found for {oldKey}");
+                            throw new DocumentWriterException($"No key found for {oldKey}");
                         }
 
                         if (string.IsNullOrWhiteSpace(value))
@@ -133,7 +133,7 @@ namespace LoopCheckTool.Lib.Document
         {
             try
             {
-                var doc = DocumentBuilder.BuildDocument(sources);
+                WmlDocument doc = DocumentBuilder.BuildDocument(sources);
                 MemoryStream stream = new MemoryStream();
 
                 doc.WriteByteArray(stream);
@@ -179,13 +179,6 @@ namespace LoopCheckTool.Lib.Document
                     customProp.PropertyId = pid++;
                 }
             }
-        }
-
-        public class WordWriterException : Exception
-        {
-            public WordWriterException() { }
-            public WordWriterException(string message) : base(message) { }
-            public WordWriterException(string message, Exception inner) : base(message, inner) { }
         }
     }
 }
