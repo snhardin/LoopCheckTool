@@ -332,20 +332,27 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 if (c.DataType != null && c.DataType == CellValues.SharedString)
                     return sharedStrings.ElementAt(int.Parse(cellText)).InnerText;
 
-                // Check if the text is a number.
-                if (!string.IsNullOrEmpty(cellText) && double.TryParse(cellText, out double convDbl))
+                if (!string.IsNullOrEmpty(cellText) && c.StyleIndex.HasValue)
                 {
-                    System.Globalization.NumberStyles styles = System.Globalization.NumberStyles.Float;
-                    System.Globalization.CultureInfo cultureInfo = System.Globalization.CultureInfo.InvariantCulture;
+                    try
+                    {
+                        // Try to find cell formatting information if it's a number.
+                        CellFormats cellFormats = document.WorkbookPart.WorkbookStylesPart.Stylesheet.CellFormats;
+                        CellFormat cellFormat = (CellFormat)cellFormats.ElementAt((int)c.StyleIndex.Value);
 
-                    // Try to parse as a long and a decimal.
-                    if (long.TryParse(cellText, styles, cultureInfo, out long convLong))
-                        return convLong.ToString();
-                    if (decimal.TryParse(cellText, styles, cultureInfo, out decimal convDec))
-                        return convDec.ToString();
+                        NumberingFormats numberingFormats = document.WorkbookPart.WorkbookStylesPart.Stylesheet.NumberingFormats;
+                        NumberingFormat numberFormat = numberingFormats.Elements<NumberingFormat>()
+                            .Where(f => f.NumberFormatId.Value == cellFormat.NumberFormatId.Value)
+                            .FirstOrDefault();
 
-                    // If all else fails, return a formatted double.
-                    return convDbl.ToString("N").Replace(",", "");
+                        // Try to parse to double with format.
+                        if (numberFormat != default(NumberingFormat) && double.TryParse(cellText, out double conv))
+                            return conv.ToString(numberFormat.FormatCode);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn(ex, "Error retrieving cell format information");
+                    }
                 }
 
                 return cellText;
