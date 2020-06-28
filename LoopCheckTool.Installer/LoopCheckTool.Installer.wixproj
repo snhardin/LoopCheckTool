@@ -37,7 +37,6 @@
     <TagFile>$(IntermediateOutputPath)GitTag</TagFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CheckDotnetCoreVersion.wxs" />
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Fragment>
-    <CustomAction Id="CheckDotNetCoreVersionAction" BinaryKey="DotnetCoreChecker" DllEntry="CheckDotNetCoreVersion" Execute="immediate"
-                  Return="check" />
-    <Binary Id="DotnetCoreChecker" SourceFile="$(var.LoopCheckTool.Installer.CheckDotNetCoreVersion.TargetDir)$(var.LoopCheckTool.Installer.CheckDotNetCoreVersion.TargetName).CA.dll" />
-	</Fragment>
-</Wix>

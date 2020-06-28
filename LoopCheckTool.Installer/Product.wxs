@@ -73,9 +73,9 @@
       </Feature>
     </Feature>
 
-    <InstallExecuteSequence>
+    <!--<InstallExecuteSequence>
       <Custom Action="CheckDotNetCoreVersionAction" After="InstallFinalize" />
-    </InstallExecuteSequence>
+    </InstallExecuteSequence>-->
 
     <WixVariable Id="WixUILicenseRtf" Value="Resources/license.rtf" />
     <UIRef Id="WixUI_Mondo" />
