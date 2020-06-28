@@ -62,11 +62,11 @@ namespace LoopCheckTool.Console
 
                 if (sheet != default(ExcelReader.Worksheet))
                 {
-                    using (ExcelReader.RowReaderContext rowReader = reader.CreateRowReader(sheet))
+                    using (ExcelReader.RowReader rowReader = reader.CreateRowReader(sheet))
                     {
                         WordWriter writer = new WordWriter();
                         IDictionary<string, string> rows = null;
-                        for (int i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
+                        for (ulong i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
                         {
                             try
                             {
@@ -104,9 +104,9 @@ namespace LoopCheckTool.Console
                                     templateStream.Write(rawTemplate, 0, rawTemplate.Length);
                                     try
                                     {
-                                        writer.FillTemplate_Safe(templateStream, rows, i);
+                                        writer.GenerateAndAppendTemplate(templateStream, rows, i);
                                     }
-                                    catch (WordWriter.WordWriterException ex)
+                                    catch (DocumentWriterException ex)
                                     {
                                         throw new LibraryException("Parse error", ex, i, rows);
                                     }
