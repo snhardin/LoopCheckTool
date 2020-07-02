@@ -21,6 +21,7 @@ namespace LoopCheckTool.Console
             AffectedRow = affectedRow;
             RowData = rowData;
         }
+
         public LibraryException(string message, Exception innerException, ulong affectedRow, IDictionary<string, string> rowData) : base(message, innerException)
         {
             AffectedRow = affectedRow;

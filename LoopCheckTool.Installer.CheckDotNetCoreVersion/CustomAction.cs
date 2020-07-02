@@ -30,6 +30,7 @@ namespace LoopCheckTool.Installer.CheckDotNetCoreVersion
             StringBuilder output = new StringBuilder();
             proc.OutputDataReceived += (sender, args) => output.AppendLine(args.Data);
 
+            // TODO: Figure out what to do with the error output.
             StringBuilder errorOutput = new StringBuilder();
             proc.ErrorDataReceived += (sender, args) => errorOutput.AppendLine(args.Data);
 
@@ -45,9 +46,9 @@ namespace LoopCheckTool.Installer.CheckDotNetCoreVersion
 
             Record record = new Record(2);
             record[0] = "[1]";
-            record[1] = "No DotNet Core runtime has been detected on your computer. This program " +
+            record[1] = "Could not detect DotNet Core runtime on your computer. This program " +
                 "requires .NET Core >= 3.1. Please install the runtime before attempting to " +
-                "run this program.";
+                "run this program. The install will now continue as normal.";
             session.Message(InstallMessage.Error, record);
 
             return ActionResult.Success;
