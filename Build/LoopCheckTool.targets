@@ -8,7 +8,7 @@
     <AssemblyVersion>$(UserDefinedVersion).0</AssemblyVersion>
     <AssemblyTitle>$(AssemblyName)</AssemblyTitle>
     <Company>Scott "Dgigs" Hardin</Company>
-    <Copyright>Copyright ©  2020</Copyright>
+    <Copyright>Copyright (c) Scott Hardin 2020</Copyright>
     <FileVersion>$(UserDefinedVersion).$(GITHUB_RUN_NUMBER)</FileVersion>
     <Product>$(AssemblyName)</Product>
     <RepositoryUrl>https://github.com/snhardin/LoopCheckTool</RepositoryUrl>

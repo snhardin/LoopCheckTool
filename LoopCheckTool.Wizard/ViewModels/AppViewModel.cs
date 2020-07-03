@@ -126,7 +126,7 @@ namespace LoopCheckTool.Wizard.ViewModels
                 uint errors = 0;
                 WordWriter writer = new WordWriter();
                 IDictionary<string, string> rows = null;
-                for (ulong i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
+                for (int i = 0; (rows = rowReader.ReadNextRow()) != null; i++)
                 {
                     try
                     {

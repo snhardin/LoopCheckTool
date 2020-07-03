@@ -9,7 +9,7 @@ namespace LoopCheckTool.Lib.Document
 {
     public class DocsWriter
     {
-        public void GenerateAndAppendTemplate(MemoryStream template, IDictionary<string, string> values, ulong idx)
+        public void GenerateAndAppendTemplate(MemoryStream template, IDictionary<string, string> values, int idx)
         {
             throw new NotImplementedException();
         }

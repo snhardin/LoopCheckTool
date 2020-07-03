@@ -22,7 +22,7 @@ namespace LoopCheckTool.Lib.Document
             sources = new List<Source>();
         }
 
-        private (string, string, string) TransformFieldProperty(string instruction, ulong suffix)
+        private (string, string, string) TransformFieldProperty(string instruction, int suffix)
         {
             string[] explosion = instruction.Split('"');
             if (explosion.Length != 3)
@@ -37,7 +37,7 @@ namespace LoopCheckTool.Lib.Document
             }
         }
 
-        private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, ulong suffix)
+        private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
         {
             string[] explosion = instruction.Split(null);
             if (explosion.Length != 3)
@@ -71,7 +71,7 @@ namespace LoopCheckTool.Lib.Document
             }
         }
 
-        public void GenerateAndAppendTemplate(MemoryStream template, IDictionary<string, string> values, ulong idx)
+        public void GenerateAndAppendTemplate(MemoryStream template, IDictionary<string, string> values, int idx)
         {
             try
             {
