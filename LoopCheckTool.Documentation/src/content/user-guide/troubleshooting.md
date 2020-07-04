@@ -2,7 +2,7 @@
 title: "Troubleshooting"
 date: 2020-07-02T18:06:12-04:00
 draft: true
-weight: 20
+weight: 30
 ---
 
 ## Number Formatting

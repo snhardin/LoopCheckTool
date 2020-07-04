@@ -2,7 +2,7 @@
 title: "Desktop Application"
 date: 2020-05-31T15:19:25-04:00
 draft: true
-weight: 10
+weight: 20
 ---
 
 The desktop application, dubbed `LoopCheckTool.Wizard` is a Wizard that walks through all of the required steps to generate a LoopCheck `.docx` file.
