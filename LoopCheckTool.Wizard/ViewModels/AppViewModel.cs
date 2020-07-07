@@ -213,6 +213,8 @@ namespace LoopCheckTool.Wizard.ViewModels
 
         private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            LoadingService.CloseLoadingDialog();
+
             if (e.Error != null)
             {
                 throw e.Error;
@@ -224,7 +226,6 @@ namespace LoopCheckTool.Wizard.ViewModels
                 MessageBox.Show($"Document generation complete! {errors} errors occurred.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-            LoadingService.CloseLoadingDialog();
             App.Current.MainWindow.Close();
         }
 

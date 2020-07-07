@@ -332,7 +332,7 @@ namespace LoopCheckTool.Lib.Spreadsheet
                 if (c.DataType != null && c.DataType == CellValues.SharedString)
                     return sharedStrings.ElementAt(int.Parse(cellText)).InnerText;
 
-                if (!string.IsNullOrEmpty(cellText) && c.StyleIndex.HasValue)
+                if (!string.IsNullOrEmpty(cellText) && c.StyleIndex != null)
                 {
                     try
                     {

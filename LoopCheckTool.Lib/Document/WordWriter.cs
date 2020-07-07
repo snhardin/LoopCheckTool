@@ -24,7 +24,9 @@ namespace LoopCheckTool.Lib.Document
 
         private (string, string, string) TransformFieldProperty(string instruction, int suffix)
         {
-            string[] explosion = instruction.Split('"');
+            string[] explosion = instruction.Split('"')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToArray();
             if (explosion.Length != 3)
             {
                 return TransformFieldPropertyUsingWhitespace(instruction, suffix);
@@ -39,13 +41,17 @@ namespace LoopCheckTool.Lib.Document
 
         private (string, string, string) TransformFieldPropertyUsingWhitespace(string instruction, int suffix)
         {
-            string[] explosion = instruction.Split(null);
-            if (explosion.Length != 3)
+            string[] explosion = instruction.Split(null)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToArray();
+            if (explosion.Length < 2)
             {
                 throw new DocumentWriterException("Unrecognized field instruction format");
             }
             else
             {
+                if (explosion.Length != 3)
+                    Logger.Warn($"Got unexpected number of tokens from instruction {instruction}. Continuing anyway.");
                 string oldKey = explosion[1];
                 explosion[1] = explosion[1] + "_" + suffix;
                 return (string.Join(" ", explosion), oldKey, explosion[1]);
@@ -80,6 +86,7 @@ namespace LoopCheckTool.Lib.Document
                 {
                     OpenXmlPartRootElement root = templateDoc.MainDocumentPart.RootElement;
 
+                    // TODO: Set text here as well so Update Fields doesn't need to be run.
                     foreach (SimpleField field in root.Descendants<SimpleField>())
                     {
                         Logger.Info($"Handling SimpleField of instruction: {field.Instruction.Value}.");
@@ -100,6 +107,8 @@ namespace LoopCheckTool.Lib.Document
                         AddCustomProperty(newPropName, value);
                     }
 
+                    // TODO: Make more robust... FieldCodes are far more complex than this.
+                    // See the ECMA standard for 2.16.18.
                     foreach (FieldCode field in root.Descendants<FieldCode>())
                     {
                         Logger.Info($"Handling FieldCode of text: {field.Text}.");

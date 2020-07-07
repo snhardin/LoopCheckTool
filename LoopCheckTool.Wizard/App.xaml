@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:LoopCheckTool.Wizard"
              xmlns:services="clr-namespace:LoopCheckTool.Wizard.Services"
              xmlns:vm="clr-namespace:LoopCheckTool.Wizard.ViewModels"
-             StartupUri="Views/MainWindow.xaml">
+             StartupUri="Views/MainWindow.xaml"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         
     </Application.Resources>

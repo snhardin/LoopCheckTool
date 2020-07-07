@@ -22,5 +22,11 @@ namespace LoopCheckTool.Wizard
             AppViewModel viewModel = new AppViewModel(loadingService, aboutService);
             Resources.Add(nameof(AppViewModel), viewModel);
         }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("The application has encountered an unrecoverable critical error. Please leave a bug report with any logs present " +
+                "in the LoopCheckTool install folder.", "Critical", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
