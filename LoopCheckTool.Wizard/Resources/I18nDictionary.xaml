@@ -20,16 +20,7 @@ If needed, please see the help file for the expected format.
 retrieved from an Excel document. The generated Word Documents are then merged
 into one big document.
         
-Its intended use is for Loop Check documentation generation. Each IO Type should
-have its own Word Document template in a folder. Your IO List should be in its
-own Excel file and each tag should have its own line.
-
-Using the tool, a Word Document template will be selected for each tag in the
-IO List. This template will be filled in from information retrieved for that tag.
-Once all tags have been processed, one large Word Document will be generated in
-the end.
-        
-Made with love by Scott "Dgigs" Hardin :)
+Please check the User Guide by clicking the Help button for usage instructions.
         
 To get started, click on the "Next" button.
     </system:String>

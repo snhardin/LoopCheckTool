@@ -10,4 +10,4 @@ The LoopCheckTool is a Windows application built in .Net for generating a Loop C
 
 The tool is available as both a CLI tool and as a Windows application. Linux or Mac OS support is not planned at this time, but may be a possibility in the future as .Net Core becomes more mature.
 
-Right now, the tool is quite alpha and unstable, so please [report bugs and request features](https://github.com/snhardin/LoopCheckTool/issues) generously.
+Right now, the tool is quite early in development, so please [report bugs and request features](https://github.com/snhardin/LoopCheckTool/issues) generously.

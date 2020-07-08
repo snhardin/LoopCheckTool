@@ -2,6 +2,7 @@
 title: "User Guide"
 date: 2020-05-31T14:38:44-04:00
 draft: true
+weight: 1
 ---
 
 ## General
